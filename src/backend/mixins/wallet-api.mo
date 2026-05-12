@@ -205,7 +205,7 @@ mixin (
     switch (nft.location) {
       case (#Registered) {
         #err(
-          "This NFT is held by your Principal ID. Use the wallet send action so your signed-in identity can transfer it directly from the external collection."
+          "This NFT is only registered from your external wallet. Deposit it into the app vault before sending it from inside the app."
         );
       };
       case (#Vaulted) {

@@ -35,7 +35,7 @@ export function NFTCard({
   const locationLabel = isListed
     ? "Listed"
     : nft.location === "Registered"
-      ? "In Wallet"
+      ? "Registered"
       : nft.location === "Vaulted"
         ? "Vaulted"
         : "Minted";
