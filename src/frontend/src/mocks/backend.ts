@@ -10,6 +10,7 @@ import type {
   AccountIdentifier,
   ModerationCategorySettings,
 } from "../backend-client";
+import type { Agent } from "@icp-sdk/core/agent";
 import { ListingStatus } from "../backend-client";
 import { Principal } from "@icp-sdk/core/principal";
 
@@ -329,6 +330,9 @@ function sampleCollectionNFTs(collectionId: bigint): WalletNFT[] {
 }
 
 export const mockBackend: backendInterface = {
+  getAgent: (): Agent => {
+    throw new Error("Mock backend does not provide an authenticated agent");
+  },
   addCollection: async (
     name,
     description,

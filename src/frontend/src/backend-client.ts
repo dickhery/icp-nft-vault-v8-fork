@@ -374,6 +374,7 @@ export interface CreateActorOptions {
 }
 
 export interface backendInterface {
+  getAgent(): Agent;
   addCollection(
     name: string,
     description: string,
@@ -1414,10 +1415,15 @@ export class Backend implements backendInterface {
     private readonly actor: ActorSubclass<any>,
     _uploadFile: (file: ExternalBlob) => Promise<Uint8Array>,
     _downloadFile: (file: Uint8Array) => Promise<ExternalBlob>,
+    private readonly agent: Agent,
     private readonly processError?: (error: unknown) => never,
   ) {
     void _uploadFile;
     void _downloadFile;
+  }
+
+  getAgent(): Agent {
+    return this.agent;
   }
 
   private async run<T>(operation: () => Promise<T>): Promise<T> {
@@ -2097,5 +2103,11 @@ export function createActor(
     canisterId,
     ...options.actorOptions,
   });
-  return new Backend(actor, uploadFile, downloadFile, options.processError);
+  return new Backend(
+    actor,
+    uploadFile,
+    downloadFile,
+    agent,
+    options.processError,
+  );
 }

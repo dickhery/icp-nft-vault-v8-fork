@@ -27,6 +27,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/hooks/use-auth";
 import { useBackend } from "@/hooks/use-backend";
 import { isLowCyclesError } from "@/lib/cycles";
+import { transferRegisteredNFT } from "@/lib/external-nft-transfer";
 import { resolveImageUrl } from "@/lib/media";
 import type {
   ActiveListingDetail,
@@ -189,11 +190,13 @@ interface SendNFTModalProps {
 
 function SendNFTModal({ open, onClose, nft, collection }: SendNFTModalProps) {
   const { actor } = useBackend();
+  const { principal } = useAuth();
   const queryClient = useQueryClient();
   const [recipient, setRecipient] = useState("");
   const [recipientError, setRecipientError] = useState("");
 
   const nftName = nft.metadata.name ?? `NFT #${nft.tokenId}`;
+  const isRegisteredExternal = nft.location === "Registered";
 
   function validateRecipient(value: string): string {
     if (!value.trim()) return "Recipient Principal ID is required";
@@ -211,6 +214,32 @@ function SendNFTModal({ open, onClose, nft, collection }: SendNFTModalProps) {
       const err = validateRecipient(recipient);
       if (err) throw new Error(err);
       const recipientPrincipal = Principal.fromText(recipient.trim());
+      if (isRegisteredExternal) {
+        if (!collection) {
+          throw new Error(
+            "Collection information is required for this transfer",
+          );
+        }
+        if (!principal) {
+          throw new Error("You must be logged in to send this NFT");
+        }
+        const message = await transferRegisteredNFT({
+          agent: actor.getAgent(),
+          collection,
+          nft,
+          owner: principal,
+          recipient: recipientPrincipal,
+        });
+        try {
+          const syncResult = await actor.syncUserNFTs();
+          if (syncResult.__kind__ === "err") {
+            console.warn("[sendNFT] wallet sync failed:", syncResult.err);
+          }
+        } catch (syncError) {
+          console.warn("[sendNFT] wallet sync failed:", syncError);
+        }
+        return message;
+      }
       const result = await actor.sendNFT(nft.id, recipientPrincipal);
       if (result.__kind__ === "err") {
         throw new Error(result.err);
@@ -218,7 +247,7 @@ function SendNFTModal({ open, onClose, nft, collection }: SendNFTModalProps) {
       return result.ok;
     },
     onSuccess: (txId) => {
-      toast.success(`NFT sent successfully! Transaction: ${txId}`);
+      toast.success(txId || "NFT sent successfully");
       queryClient.invalidateQueries({ queryKey: ["userNFTs"] });
       queryClient.invalidateQueries({ queryKey: ["userStats"] });
       setRecipient("");
@@ -298,9 +327,11 @@ function SendNFTModal({ open, onClose, nft, collection }: SendNFTModalProps) {
           <div className="flex items-start gap-2 p-3 bg-destructive/5 border border-destructive/20 rounded-lg">
             <Info className="w-4 h-4 text-destructive shrink-0 mt-0.5" />
             <p className="text-xs text-destructive leading-relaxed">
-              <strong>This action cannot be undone.</strong> The NFT will be
-              permanently transferred to the recipient's wallet. Double-check
-              the Principal ID before sending.
+              <strong>This action cannot be undone.</strong>{" "}
+              {isRegisteredExternal
+                ? "This NFT will be sent directly from your connected wallet on the original collection canister."
+                : "The NFT will be permanently transferred to the recipient's wallet."}{" "}
+              Double-check the Principal ID before sending.
             </p>
           </div>
 
@@ -539,7 +570,7 @@ function NFTDetailsModal({
                   </a>
                 </Button>
               )}
-              {onSend && nft.location !== "Registered" && !isListed && (
+              {onSend && !isListed && (
                 <Button
                   className="gap-2"
                   onClick={onSend}
@@ -1577,8 +1608,8 @@ function CollectionSection({
               }}
               data-ocid={`wallet.send_nft_button.${sectionIndex * 100 + i + 1}`}
               aria-label={`Send ${nft.metadata.name ?? `NFT #${nft.tokenId}`}`}
-              disabled={nft.location === "Registered" || isNFTListed(nft)}
-              hidden={nft.location === "Registered" || isNFTListed(nft)}
+              disabled={isNFTListed(nft)}
+              hidden={isNFTListed(nft)}
             >
               <Send className="w-3 h-3" />
               Send
@@ -1615,7 +1646,7 @@ function CollectionSection({
             ) ?? 0n
           }
           onSend={
-            detailNft.location === "Registered" || isNFTListed(detailNft)
+            isNFTListed(detailNft)
               ? undefined
               : () => {
                   setDetailNft(null);
