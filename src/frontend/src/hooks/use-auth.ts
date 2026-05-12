@@ -3,6 +3,7 @@ import type { Principal } from "@icp-sdk/core/principal";
 import { useCallback } from "react";
 
 export interface UseAuthReturn {
+  identity: unknown | null;
   principal: Principal | null;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -24,6 +25,7 @@ export function useAuth(): UseAuthReturn {
   }, [clear]);
 
   return {
+    identity: isAuthenticated ? identity : null,
     principal,
     isAuthenticated,
     isLoading: isLoggingIn,
