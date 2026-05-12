@@ -1,0 +1,208 @@
+// Version: 1.0.0
+type AccountIdentifier__461726824 = Blob;
+type AccountIdentifier__537905862 = AccountIdentifier__461726824;
+type AccountIdentifier__659921903 = AccountIdentifier__461726824;
+type AuctionEscrow__460860708 =
+  {
+    amount : Nat64;
+    bidder : UserId__166399690;
+    createdAt : Timestamp__534280185;
+    depositedBlock : Nat64;
+    escrowId : Nat;
+    feeReserve : Nat64;
+    ledgerFeeE8s : Nat64;
+    listingId : ListingId__411740840
+  };
+type AuctionListing__214662739 =
+  {
+    createdAt : Timestamp__534280185;
+    endTime : Timestamp__534280185;
+    highestBid : Nat64;
+    highestBidder : ?UserId__166399690;
+    id : ListingId__411740840;
+    nftId : NFTId__601719529;
+    seller : UserId__166399690;
+    startingBid : Nat64;
+    status : ListingStatus__992681670
+  };
+type Bid__832380272 =
+  {
+    amount : Nat64;
+    bidder : UserId__166399690;
+    listingId : ListingId__411740840;
+    placedAt : Timestamp__534280185
+  };
+type CollectionBrowseInfo__259459099 =
+  {tokenIndexOffset : ?Nat; totalSupply : ?Nat};
+type CollectionDividendConfig__135318206 = {enabled : Bool};
+type CollectionId__413579528 = CollectionId__674876002;
+type CollectionId__519062255 = CollectionId__674876002;
+type CollectionId__674876002 = Nat;
+type CollectionKind__262311898 = {#External; #Minted};
+type Collection__211048818 =
+  {
+    browseInfo : ?CollectionBrowseInfo__259459099;
+    canisterId : Principal;
+    description : Text;
+    dividendConfig : ?CollectionDividendConfig__135318206;
+    id : CollectionId__674876002;
+    imageUrl : Text;
+    kind : CollectionKind__262311898;
+    name : Text;
+    standard : NFTStandard__49470003;
+    symbol : Text
+  };
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type DepositPreparation__848295656 =
+  {
+    collectionId : CollectionId__519062255;
+    preparedAt : Timestamp__301639476;
+    tokenId : Text;
+    user : UserId__74810557
+  };
+type FixedListing__362219521 =
+  {
+    createdAt : Timestamp__534280185;
+    id : ListingId__411740840;
+    nftId : NFTId__601719529;
+    price : Nat64;
+    seller : UserId__166399690;
+    status : ListingStatus__992681670
+  };
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type ListingId__411740840 = Nat;
+type ListingStatus__992681670 = {#Active; #Cancelled; #Settled; #Sold};
+type Map__158565046<K, V> = Map__297112838<K, V>;
+type Map__297112838<K, V> =
+  {var root : Node__46230540<K, V>; var size : Nat__490723111};
+type Map__605269027<K, V> = Map__158565046<K, V>;
+type MintConfig__1058316781 =
+  {
+    collectionCanisterCycles : Nat;
+    collectionCanisterWasmUploaded : Bool;
+    collectionCreationEnabled : Bool;
+    collectionCreationPayoutAccount : ?AccountIdentifier__537905862;
+    collectionCreationPriceE8s : Nat64;
+    collectionId : ?CollectionId__413579528;
+    mainMintEnabled : Bool;
+    mainMintPayoutAccount : ?AccountIdentifier__537905862;
+    mainMintPriceE8s : Nat64;
+    mintEnabled : Bool;
+    mintPriceE8s : Nat64;
+    payoutAccount : ?AccountIdentifier__537905862
+  };
+type MintedToken__579944743 =
+  {
+    metadata : NFTMetadata__480568277;
+    mintedAt : Nat64;
+    mintedBy : Principal;
+    owner : Principal;
+    tokenId : Nat;
+    transferredAt : ?Nat64;
+    transferredBy : ?Principal
+  };
+type ModerationCategorySettings__689664451 =
+  {
+    explicitLanguage : Bool;
+    graphicViolence : Bool;
+    hateOrHarassment : Bool;
+    hateSymbols : Bool;
+    illegalOrDangerous : Bool;
+    nudityOrSexual : Bool;
+    otherNsfw : Bool;
+    selfHarm : Bool
+  };
+type ModerationConfig__323099261 =
+  {
+    apiKey : ?Text;
+    categories : ModerationCategorySettings__689664451;
+    enabled : Bool;
+    model : Text;
+    userMessage : Text
+  };
+type NFTId__601719529 = NFTId__701715282;
+type NFTId__701715282 = Nat;
+type NFTMetadata__480568277 =
+  {
+    attributes : [(Text, Text)];
+    description : ?Text;
+    imageUrl : ?Text;
+    name : ?Text
+  };
+type NFTStandard__49470003 = {#DIP721; #EXT; #ICRC7; #Other : Text};
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+type Timestamp__301639476 = Int;
+type Timestamp__534280185 = Timestamp__301639476;
+type UserId__158757552 = Principal;
+type UserId__166399690 = UserId__158757552;
+type UserId__74810557 = UserId__158757552;
+type WalletLocation__456448127 = {#Minted; #Registered; #Vaulted};
+type WalletNFT__72979044 =
+  {
+    collectionId : CollectionId__519062255;
+    id : NFTId__701715282;
+    location : WalletLocation__456448127;
+    metadata : NFTMetadata__480568277;
+    owner : UserId__74810557;
+    registeredAt : Timestamp__301639476;
+    tokenId : Text
+  };
+actor {
+  stable authState : {var adminPrincipal : ?Principal};
+  stable collectionsState :
+    {
+      collections :
+        Map__605269027<CollectionId__674876002, Collection__211048818>;
+      var nextId : Nat
+    };
+  stable dividendsState :
+    {
+      claimableE8s : Map__605269027<Text, Nat64>;
+      pendingClaims : Map__605269027<Text, Bool>;
+      processedBalanceE8s : Map__605269027<CollectionId__674876002, Nat64>
+    };
+  stable marketplacePaymentState :
+    {
+      auctionEscrows :
+        Map__605269027<ListingId__411740840, AuctionEscrow__460860708>;
+      listingLocks : Map__605269027<ListingId__411740840, Bool>;
+      var mintlabFeeRecipient : ?AccountIdentifier__659921903;
+      var nextEscrowId : Nat;
+      pendingRefunds : Map__605269027<Nat, AuctionEscrow__460860708>
+    };
+  stable marketplaceState :
+    {
+      auctionListings :
+        Map__605269027<ListingId__411740840, AuctionListing__214662739>;
+      bids : Map__605269027<ListingId__411740840, [Bid__832380272]>;
+      escrowedNFTs :
+        Map__605269027<ListingId__411740840, WalletNFT__72979044>;
+      fixedListings :
+        Map__605269027<ListingId__411740840, FixedListing__362219521>;
+      var nextId : Nat
+    };
+  stable mintState :
+    {
+      var collectionCanisterWasm : ?Blob;
+      var config : MintConfig__1058316781;
+      var nextTokenId : Nat;
+      var nextTransactionId : Nat;
+      pendingCollectionCreates : Map__605269027<Principal, Bool>;
+      tokens : Map__605269027<Nat, MintedToken__579944743>
+    };
+  stable moderationState : {var config : ModerationConfig__323099261};
+  stable walletState :
+    {
+      var nextId : Nat;
+      nfts : Map__605269027<NFTId__701715282, WalletNFT__72979044>;
+      pendingDeposits : Map__605269027<Text, DepositPreparation__848295656>;
+      tokenIndex : Map__605269027<Text, NFTId__701715282>;
+      userNFTs : Map__605269027<UserId__74810557, [NFTId__701715282]>
+    }
+};

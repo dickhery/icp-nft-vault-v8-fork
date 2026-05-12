@@ -1,0 +1,821 @@
+type WalletNFT =
+ record {
+   collectionId: CollectionId;
+   id: NFTId;
+   location: WalletLocation;
+   metadata: NFTMetadata;
+   owner: UserId;
+   registeredAt: Timestamp;
+   tokenId: text;
+ };
+type WalletLocation =
+ variant {
+   Minted;
+   Registered;
+   Vaulted;
+ };
+type UserId = principal;
+type TransferResult =
+ variant {
+   Err: TransferError;
+   Ok: nat64;
+ };
+type TransferError =
+ variant {
+   BadFee: record {expected_fee: Tokens;};
+   InsufficientFunds: record {balance: Tokens;};
+   TxCreatedInFuture;
+   TxDuplicate: record {duplicate_of: nat64;};
+   TxTooOld: record {allowed_window_nanos: nat64;};
+ };
+type Tokens = record {e8s: nat64;};
+type TokenMetadataValue =
+ variant {
+   BlobContent: blob;
+   BoolContent: bool;
+   IntContent: int;
+   Nat64Content: nat64;
+   Nat8Content: nat8;
+   NatContent: nat;
+   NestedContent: vec record {
+                        text;
+                        TokenMetadataValue;
+                      };
+   Principal: principal;
+   PrincipalContent: principal;
+   TextContent: text;
+ };
+type TokenMetadata =
+ record {
+   approved_at: opt nat64;
+   approved_by: opt principal;
+   burned_at: opt nat64;
+   burned_by: opt principal;
+   is_burned: bool;
+   minted_at: nat64;
+   minted_by: principal;
+   operator: opt principal;
+   owner: opt principal;
+   properties: vec record {
+                     text;
+                     TokenMetadataValue;
+                   };
+   token_identifier: nat;
+   transferred_at: opt nat64;
+   transferred_by: opt principal;
+ };
+type Timestamp = int;
+type SupportedStandard =
+ record {
+   name: text;
+   url: text;
+ };
+type PublicModerationConfig =
+ record {
+   apiKeyConfigured: bool;
+   categories: ModerationCategorySettings;
+   enabled: bool;
+   model: text;
+   userMessage: text;
+ };
+type NFTStats =
+ record {
+   perCollection: vec record {
+                        CollectionId;
+                        nat;
+                      };
+   totalCount: nat;
+ };
+type NFTStandard =
+ variant {
+   DIP721;
+   EXT;
+   ICRC7;
+   Other: text;
+ };
+type NFTMetadata =
+ record {
+   attributes: vec record {
+                     text;
+                     text;
+                   };
+   description: opt text;
+   imageUrl: opt text;
+   name: opt text;
+ };
+type NFTId = nat;
+type NFTDividend =
+ record {
+   claimableE8s: nat64;
+   collection: Collection;
+   nft: WalletNFT;
+ };
+type ModerationCategorySettings =
+ record {
+   explicitLanguage: bool;
+   graphicViolence: bool;
+   hateOrHarassment: bool;
+   hateSymbols: bool;
+   illegalOrDangerous: bool;
+   nudityOrSexual: bool;
+   otherNsfw: bool;
+   selfHarm: bool;
+ };
+type MintReceipt =
+ record {
+   nft: WalletNFT;
+   paymentBlock: nat64;
+ };
+type MintConfig =
+ record {
+   collectionCanisterCycles: nat;
+   collectionCanisterWasmUploaded: bool;
+   collectionCreationEnabled: bool;
+   collectionCreationPayoutAccount: opt AccountIdentifier;
+   collectionCreationPriceE8s: nat64;
+   collectionId: opt CollectionId;
+   mainMintEnabled: bool;
+   mainMintPayoutAccount: opt AccountIdentifier;
+   mainMintPriceE8s: nat64;
+   mintEnabled: bool;
+   mintPriceE8s: nat64;
+   payoutAccount: opt AccountIdentifier;
+ };
+type MarketplaceFeeConfig =
+ record {
+   auctionBidFeeReserveE8s: nat64;
+   ledgerFeeE8s: nat64;
+   mintlabFeeBasisPoints: nat;
+   mintlabFeeRecipient: opt AccountIdentifier;
+ };
+type ListingStatus =
+ variant {
+   Active;
+   Cancelled;
+   Settled;
+   Sold;
+ };
+type ListingId = nat;
+type ICRC7Value =
+ variant {
+   Array: vec ICRC7Value;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              ICRC7Value;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type ICRC7TransferResult =
+ variant {
+   Err: ICRC7TransferError;
+   Ok: nat;
+ };
+type ICRC7TransferError =
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   Duplicate: record {duplicate_of: nat;};
+   GenericBatchError: record {
+                        error_code: nat;
+                        message: text;
+                      };
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InvalidRecipient;
+   NonExistingTokenId;
+   TooOld;
+   Unauthorized;
+ };
+type ICRC7TransferArg =
+ record {
+   created_at_time: opt nat64;
+   from_subaccount: opt blob;
+   memo: opt blob;
+   to: ICRC7Account;
+   token_id: nat;
+ };
+type ICRC7TokenMetadata =
+ vec record {
+       text;
+       ICRC7Value;
+     };
+type ICRC7Subaccount = blob;
+type ICRC7Account =
+ record {
+   owner: principal;
+   subaccount: opt ICRC7Subaccount;
+ };
+type HttpRequestResult =
+ record {
+   body: blob;
+   headers: vec HttpHeader;
+   status: nat;
+ };
+type HttpHeader =
+ record {
+   name: text;
+   value: text;
+ };
+type HeaderField =
+ record {
+   text;
+   text;
+ };
+type FixedListing =
+ record {
+   createdAt: Timestamp;
+   id: ListingId;
+   nftId: NFTId;
+   price: nat64;
+   seller: UserId;
+   status: ListingStatus;
+ };
+type EXTUser =
+ variant {
+   address: EXTAccountIdentifier;
+   "principal": principal;
+ };
+type EXTTransferResponse =
+ variant {
+   err:
+    variant {
+      CannotNotify: EXTAccountIdentifier;
+      InsufficientBalance;
+      InvalidToken: EXTTokenIdentifier;
+      Other: text;
+      Rejected;
+      Unauthorized: EXTAccountIdentifier;
+    };
+   ok: EXTBalance;
+ };
+type EXTTransferRequest =
+ record {
+   amount: EXTBalance;
+   from: EXTUser;
+   memo: EXTMemo;
+   notify: bool;
+   subaccount: opt EXTSubAccount;
+   to: EXTUser;
+   token: EXTTokenIdentifier;
+ };
+type EXTTokensExtResult =
+ variant {
+   err: EXTCommonError;
+   ok: vec record {
+             EXTTokenIndex;
+             opt EXTListing;
+             opt blob;
+           };
+ };
+type EXTTokenIndex = nat32;
+type EXTTokenIdentifier = text;
+type EXTTime = int;
+type EXTSubAccount = blob;
+type EXTMetadataValue =
+ record {
+   text;
+   variant {
+     "blob": blob;
+     "nat": nat;
+     "nat8": nat8;
+     "text": text;
+   };
+ };
+type EXTMetadataResult =
+ variant {
+   err: EXTCommonError;
+   ok: EXTMetadata;
+ };
+type EXTMetadataLegacy =
+ variant {
+   fungible:
+    record {
+      decimals: nat8;
+      metadata: opt blob;
+      name: text;
+      symbol: text;
+    };
+   nonfungible: record {metadata: opt blob;};
+ };
+type EXTMetadataContainer =
+ variant {
+   "blob": blob;
+   data: vec EXTMetadataValue;
+   json: text;
+ };
+type EXTMetadata =
+ variant {
+   fungible:
+    record {
+      decimals: nat8;
+      metadata: opt EXTMetadataContainer;
+      name: text;
+      symbol: text;
+    };
+   nonfungible:
+    record {
+      asset: text;
+      metadata: opt EXTMetadataContainer;
+      name: text;
+      thumbnail: text;
+    };
+ };
+type EXTMemo = blob;
+type EXTListing =
+ record {
+   locked: opt EXTTime;
+   price: nat64;
+   seller: principal;
+ };
+type EXTCommonError =
+ variant {
+   InvalidToken: EXTTokenIdentifier;
+   Other: text;
+ };
+type EXTBalanceResponse =
+ variant {
+   err: EXTCommonError;
+   ok: EXTBalance;
+ };
+type EXTBalanceRequest =
+ record {
+   token: EXTTokenIdentifier;
+   user: EXTUser;
+ };
+type EXTBalance = nat;
+type EXTAccountIdentifier = text;
+type DividendSyncReceipt =
+ record {
+   balanceE8s: nat64;
+   collectionId: CollectionId;
+   depositedE8s: nat64;
+   distributedE8s: nat64;
+   nftCount: nat;
+   remainderE8s: nat64;
+   shareE8s: nat64;
+ };
+type DividendClaimReceipt =
+ record {
+   blockIndex: nat64;
+   collection: Collection;
+   feeE8s: nat64;
+   nft: WalletNFT;
+   paidE8s: nat64;
+ };
+type DIP721TokensResult =
+ variant {
+   Err: DIP721Error;
+   Ok: vec nat;
+ };
+type DIP721NatResult =
+ variant {
+   Err: DIP721Error;
+   Ok: nat;
+ };
+type DIP721MetadataResult =
+ variant {
+   Err: DIP721Error;
+   Ok: TokenMetadata;
+ };
+type DIP721Error =
+ variant {
+   ExistedNFT;
+   InvalidTokenId;
+   OperatorNotFound;
+   Other: text;
+   OwnerNotFound;
+   SelfApprove;
+   SelfTransfer;
+   TokenNotFound;
+   Unauthorized;
+   UnauthorizedOperator;
+   UnauthorizedOwner;
+   ZeroAddress;
+ };
+type CollectionNFTPage =
+ record {
+   coverage: CollectionBrowseCoverage;
+   nextCursor: opt text;
+   nfts: vec WalletNFT;
+   note: text;
+   totalCount: nat;
+ };
+type CollectionKind =
+ variant {
+   External;
+   Minted;
+ };
+type CollectionId = nat;
+type CollectionDividendInfo =
+ record {
+   accountId: AccountIdentifier;
+   balanceE8s: nat64;
+   collectionId: CollectionId;
+   enabled: bool;
+   nftCount: nat;
+   pendingE8s: nat64;
+   processedBalanceE8s: nat64;
+ };
+type CollectionDividendConfig = record {enabled: bool;};
+type CollectionCycleTopUpReceipt =
+ record {
+   canisterId: principal;
+   collectionId: CollectionId;
+   cycleBalance: opt nat;
+   cycleCostE8s: nat64;
+   cyclesMinted: nat;
+   cyclesRequested: nat;
+   paymentBlock: nat64;
+   totalUserDebitE8s: nat64;
+ };
+type CollectionCycleTopUpQuote =
+ record {
+   cycleCostE8s: nat64;
+   cyclesToTopUp: nat;
+   ledgerFeeE8s: nat64;
+   rateTimestampSeconds: nat64;
+   totalUserDebitE8s: nat64;
+   xdrPermyriadPerIcp: nat64;
+ };
+type CollectionCreationReceipt =
+ record {
+   collection: Collection;
+   paymentBlock: nat64;
+ };
+type CollectionCreationQuote =
+ record {
+   adminPayoutE8s: nat64;
+   adminPayoutFeeE8s: nat64;
+   collectionCanisterCycles: nat;
+   collectionCreationPriceE8s: nat64;
+   cycleCostE8s: nat64;
+   cycleTransferFeeE8s: nat64;
+   factoryReserveCycles: nat;
+   ledgerFeeE8s: nat64;
+   minimumCreationPriceE8s: nat64;
+   rateTimestampSeconds: nat64;
+   totalCyclesToConvert: nat;
+   totalUserDebitE8s: nat64;
+   xdrPermyriadPerIcp: nat64;
+ };
+type CollectionCanisterStatus =
+ record {
+   appCanisterId: principal;
+   canisterId: principal;
+   collectionId: CollectionId;
+   controllers: vec principal;
+   cycles: nat;
+   freezingThresholdSeconds: nat;
+   idleCyclesBurnedPerDay: nat;
+   moduleInstalled: bool;
+ };
+type CollectionCanisterControllers =
+ record {
+   appCanisterId: principal;
+   canisterId: principal;
+   collectionId: CollectionId;
+   controllers: vec principal;
+ };
+type CollectionBrowseStats =
+ record {
+   collectionId: CollectionId;
+   coverage: CollectionBrowseCoverage;
+   note: text;
+   totalCount: nat;
+   visibleCount: nat;
+ };
+type CollectionBrowseInfo =
+ record {
+   tokenIndexOffset: opt nat;
+   totalSupply: opt nat;
+ };
+type CollectionBrowseCoverage =
+ variant {
+   Full;
+   Partial;
+ };
+type Collection =
+ record {
+   browseInfo: opt CollectionBrowseInfo;
+   canisterId: principal;
+   description: text;
+   dividendConfig: opt CollectionDividendConfig;
+   id: CollectionId;
+   imageUrl: text;
+   kind: CollectionKind;
+   name: text;
+   standard: NFTStandard;
+   symbol: text;
+ };
+type AuctionListing =
+ record {
+   createdAt: Timestamp;
+   endTime: Timestamp;
+   highestBid: nat64;
+   highestBidder: opt UserId;
+   id: ListingId;
+   nftId: NFTId;
+   seller: UserId;
+   startingBid: nat64;
+   status: ListingStatus;
+ };
+type AuctionEscrow =
+ record {
+   amount: nat64;
+   bidder: UserId;
+   createdAt: Timestamp;
+   depositedBlock: nat64;
+   escrowId: nat;
+   feeReserve: nat64;
+   ledgerFeeE8s: nat64;
+   listingId: ListingId;
+ };
+type AssetHttpResponse =
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   status_code: nat16;
+   upgrade: bool;
+ };
+type AssetHttpRequest =
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   method: text;
+   url: text;
+ };
+type AppCycleTopUpReceipt =
+ record {
+   canisterId: principal;
+   cycleBalance: opt nat;
+   cycleCostE8s: nat64;
+   cyclesMinted: nat;
+   cyclesRequested: nat;
+   paymentBlock: nat64;
+   totalUserDebitE8s: nat64;
+ };
+type ActiveListingDetail =
+ record {
+   listing: ActiveListing;
+   nft: WalletNFT;
+ };
+type ActiveListing =
+ variant {
+   Auction: AuctionListing;
+   Fixed: FixedListing;
+ };
+type AccountIdentifier = blob;
+service : {
+  addCollection: (name: text, description: text, canisterId: principal,
+   standard: NFTStandard, imageUrl: text, symbol: text, browseInfo:
+   opt CollectionBrowseInfo) -> (Collection);
+  addCollectionCanisterController: (collectionId: CollectionId, controller:
+   principal) -> (variant {
+                    err: text;
+                    ok: CollectionCanisterControllers;
+                  });
+  balance: (request: EXTBalanceRequest) -> (EXTBalanceResponse) query;
+  bootstrapAdmin: () -> ();
+  buyFixedListing: (listingId: ListingId) -> ();
+  cancelListing: (listingId: ListingId) -> ();
+  claimNFTDividend: (nftId: NFTId) ->
+   (variant {
+      err: text;
+      ok: DividendClaimReceipt;
+    });
+  claimVaultDeposit: (collectionId: CollectionId, tokenId: text) ->
+   (variant {
+      err: text;
+      ok: WalletNFT;
+    });
+  configureMarketplaceFeeRecipient: (recipient: opt AccountIdentifier) ->
+   (MarketplaceFeeConfig);
+  configureMinting: (name: text, description: text, symbol: text, imageUrl:
+   text, collectionCreationPayoutAccount: opt AccountIdentifier,
+   collectionCreationPriceE8s: nat64, collectionCreationEnabled: bool,
+   mainMintPayoutAccount: opt AccountIdentifier, mainMintPriceE8s: nat64,
+   mainMintEnabled: bool, mainMintDividendsEnabled: bool,
+   collectionCanisterCycles: nat) -> (Collection);
+  configureModeration: (enabled: bool, apiKey: opt text, clearApiKey:
+   bool, model: text, categories: ModerationCategorySettings, userMessage:
+   text) -> (PublicModerationConfig);
+  createAuctionListing: (nftId: NFTId, startingBid: nat64, endTime: int) ->
+   (AuctionListing);
+  createFixedListing: (nftId: NFTId, price: nat64) -> (FixedListing);
+  createUserCollection: (name: text, description: text, symbol: text,
+   imageUrl: text, dividendsEnabled: bool) ->
+   (variant {
+      err: text;
+      ok: CollectionCreationReceipt;
+    });
+  dip721_owner_token_identifiers: (owner: principal) ->
+   (DIP721TokensResult) query;
+  dip721_token_metadata: (token_id: nat) -> (DIP721MetadataResult) query;
+  ext_balance: (request: EXTBalanceRequest) -> (EXTBalanceResponse) query;
+  ext_bearer: (tokenIdentifier: EXTTokenIdentifier) ->
+   (variant {
+      err: EXTCommonError;
+      ok: EXTAccountIdentifier;
+    }) query;
+  ext_extensions: () -> (vec text) query;
+  ext_metadata: (tokenIdentifier: EXTTokenIdentifier) ->
+   (EXTMetadataResult) query;
+  ext_transfer: (request: EXTTransferRequest) -> (EXTTransferResponse);
+  extdata_supply: (tokenIdentifier: EXTTokenIdentifier) ->
+   (variant {
+      err: EXTCommonError;
+      ok: EXTBalance;
+    }) query;
+  extensions: () -> (vec text) query;
+  getActiveListingDetails: () -> (vec ActiveListingDetail) query;
+  getActiveListings: () -> (vec ActiveListing) query;
+  getAdminPrincipal: () -> (opt principal) query;
+  getCollection: (id: CollectionId) -> (opt Collection) query;
+  getCollectionBrowseStats: (collectionId: CollectionId) ->
+   (CollectionBrowseStats);
+  getCollectionCanisterControllers: (collectionId: CollectionId) ->
+   (variant {
+      err: text;
+      ok: CollectionCanisterControllers;
+    });
+  getCollectionCreator: (collectionId: CollectionId) -> (opt principal) query;
+  getCollectionDividendAccountId: (collectionId: CollectionId) ->
+   (AccountIdentifier) query;
+  getCollectionDividendBalances: (collectionId: CollectionId) ->
+   (vec record {
+          text;
+          nat64;
+        }) query;
+  getCollectionDividendInfo: (collectionId: CollectionId) ->
+   (opt CollectionDividendInfo);
+  getCollectionNFT: (collectionId: CollectionId, tokenId: text) ->
+   (opt WalletNFT) query;
+  getCollectionNFTPage: (collectionId: CollectionId, cursor: opt text, limit:
+   opt nat) -> (CollectionNFTPage);
+  getCollectionNFTs: (collectionId: CollectionId) -> (vec WalletNFT);
+  getMarketplaceFeeConfig: () -> (MarketplaceFeeConfig);
+  getMintConfig: () -> (MintConfig) query;
+  getModerationConfig: () -> (PublicModerationConfig) query;
+  getMyCollectionCanisterStatuses: () -> (vec CollectionCanisterStatus);
+  getMyCreatedCollections: () -> (vec Collection);
+  getMyDividendNFTs: () -> (vec NFTDividend);
+  getMyPendingAuctionRefunds: () -> (vec AuctionEscrow);
+  getNFTStats: (user: principal) -> (NFTStats) query;
+  getRegistry: () -> (vec record {
+                            EXTTokenIndex;
+                            EXTAccountIdentifier;
+                          }) query;
+  getTokens: () -> (vec record {
+                          EXTTokenIndex;
+                          EXTMetadataLegacy;
+                        }) query;
+  getUserAccountId: () -> (AccountIdentifier) query;
+  getUserICPBalance: () -> (nat64);
+  getUserNFTs: (user: principal) -> (vec WalletNFT) query;
+  getVaultAccountId: () -> (AccountIdentifier) query;
+  getVaultPrincipal: () -> (principal) query;
+  http_request: (request: AssetHttpRequest) -> (AssetHttpResponse) query;
+  http_request_update: (request: AssetHttpRequest) -> (AssetHttpResponse);
+  icrc10_supported_standards: () -> (vec SupportedStandard) query;
+  icrc7_atomic_batch_transfers: () -> (opt bool) query;
+  icrc7_balance_of: (accounts: vec ICRC7Account) -> (vec nat) query;
+  icrc7_collection_metadata: () -> (vec record {
+                                          text;
+                                          ICRC7Value;
+                                        }) query;
+  icrc7_default_take_value: () -> (opt nat) query;
+  icrc7_description: () -> (opt text) query;
+  icrc7_logo: () -> (opt text) query;
+  icrc7_max_memo_size: () -> (opt nat) query;
+  icrc7_max_query_batch_size: () -> (opt nat) query;
+  icrc7_max_take_value: () -> (opt nat) query;
+  icrc7_max_update_batch_size: () -> (opt nat) query;
+  icrc7_name: () -> (text) query;
+  icrc7_owner_of: (token_ids: vec nat) -> (vec opt ICRC7Account) query;
+  icrc7_permitted_drift: () -> (opt nat) query;
+  icrc7_supply_cap: () -> (opt nat) query;
+  icrc7_symbol: () -> (text) query;
+  icrc7_token_metadata: (token_ids: vec nat) ->
+   (vec opt ICRC7TokenMetadata) query;
+  icrc7_tokens: (prev: opt nat, take: opt nat) -> (vec nat) query;
+  icrc7_tokens_of: (account: ICRC7Account, prev: opt nat, take: opt nat) ->
+   (vec nat) query;
+  icrc7_total_supply: () -> (nat) query;
+  icrc7_transfer: (args: vec ICRC7TransferArg) ->
+   (vec opt ICRC7TransferResult);
+  icrc7_tx_window: () -> (opt nat) query;
+  isAdmin: () -> (bool) query;
+  isNFTInUserWallet: (collectionId: CollectionId, tokenId: text, user:
+   UserId) -> (bool) query;
+  listCollections: () -> (vec Collection) query;
+  mintCollectionNFT: (collectionId: CollectionId, metadata: NFTMetadata) ->
+   (variant {
+      err: text;
+      ok: WalletNFT;
+    });
+  mintUserNFT: (metadata: NFTMetadata) ->
+   (variant {
+      err: text;
+      ok: MintReceipt;
+    });
+  placeBid: (listingId: ListingId, amount: nat64) -> (AuctionListing);
+  prepareVaultDeposit: (collectionId: CollectionId, tokenId: text) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
+  previewMyCollectionNFTs: (collectionId: CollectionId) ->
+   (variant {
+      err: text;
+      ok: vec WalletNFT;
+    });
+  quoteAppCanisterCycleTopUp: (cyclesToTopUp: nat) ->
+   (CollectionCycleTopUpQuote);
+  quoteCollectionCreationCost: (collectionCanisterCycles: nat,
+   collectionCreationPriceE8s: nat64) -> (CollectionCreationQuote);
+  quoteCollectionCycleTopUp: (cyclesToTopUp: nat) ->
+   (CollectionCycleTopUpQuote);
+  refreshCollectionDividendBalances: (collectionId: CollectionId) ->
+   (vec record {
+          text;
+          nat64;
+        });
+  refreshMyDividendNFTs: () -> (vec NFTDividend);
+  registerNFT: (collectionId: CollectionId, tokenId: text, metadata:
+   NFTMetadata) -> (variant {
+                      err: text;
+                      ok: WalletNFT;
+                    });
+  removeCollection: (id: CollectionId) -> (bool);
+  removeCollectionCanisterController: (collectionId: CollectionId,
+   controller: principal) ->
+   (variant {
+      err: text;
+      ok: CollectionCanisterControllers;
+    });
+  retryAuctionRefund: (escrowId: nat) -> (bool);
+  retryInstallCollectionCanister: (collectionId: CollectionId) ->
+   (variant {
+      err: text;
+      ok: Collection;
+    });
+  sendNFT: (nftId: NFTId, recipient: principal) ->
+   (variant {
+      err: text;
+      ok: text;
+    });
+  setCollectionCanisterWasm: (wasm: blob) -> ();
+  settleAuction: (listingId: ListingId) -> ();
+  supply: (tokenIdentifier: EXTTokenIdentifier) ->
+   (variant {
+      err: EXTCommonError;
+      ok: EXTBalance;
+    }) query;
+  syncCollectionDividends: (collectionId: CollectionId) ->
+   (variant {
+      err: text;
+      ok: DividendSyncReceipt;
+    });
+  syncUserNFTs: () ->
+   (variant {
+      err: text;
+      ok: record {
+            errors: vec text;
+            newCount: nat;
+          };
+    });
+  tokens_ext: (account: EXTAccountIdentifier) -> (EXTTokensExtResult) query;
+  topUpAppCanisterCycles: (cyclesToTopUp: nat) ->
+   (variant {
+      err: text;
+      ok: AppCycleTopUpReceipt;
+    });
+  topUpCanisterCycles: (targetCanister: principal, cyclesToTopUp: nat) ->
+   (variant {
+      err: text;
+      ok: AppCycleTopUpReceipt;
+    });
+  topUpCollectionCanisterCycles: (collectionId: CollectionId, cyclesToTopUp:
+   nat) -> (variant {
+              err: text;
+              ok: CollectionCycleTopUpReceipt;
+            });
+  transfer: (to: principal, tokenId: nat) -> (DIP721NatResult);
+  transferFromDip721: (from: principal, to: principal, tokenId: nat) ->
+   (DIP721NatResult);
+  transferICPOut: (to: AccountIdentifier, amount: nat64) -> (TransferResult);
+  transformModerationResponse: (args:
+   record {
+     context: blob;
+     response: HttpRequestResult;
+   }) -> (HttpRequestResult) query;
+  upgradeCollectionCanister: (collectionId: CollectionId) ->
+   (variant {
+      err: text;
+      ok: Collection;
+    });
+}

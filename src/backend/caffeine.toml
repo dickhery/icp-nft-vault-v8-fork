@@ -1,0 +1,25 @@
+manifest_version = "0.1.0"
+
+[project]
+name = "backend"
+type = "motoko"
+main = "main.mo"
+
+[build]
+commands = [
+  "mops install",
+  "if [ -f src/backend/main.mo ]; then BASE=src/backend; CORE=.mops/core@2.2.0/src; else BASE=.; CORE=.mops/core@2.2.0/src; fi; mkdir -p \"$BASE/dist\"; \"$(mops toolchain bin moc)\" -c --idl --stable-types \"$BASE/main.mo\" -o \"$BASE/dist/backend.wasm\" --package core \"$CORE\" --actor-idl=\"$BASE/system-idl\" --enhanced-orthogonal-persistence --implicit-package=core -no-check-ir -A=M0198 --public-metadata candid:service --release && cp \"$BASE/dist/backend.did\" \"$BASE/main.did\" && \"$(mops toolchain bin moc)\" -c --idl --stable-types \"$BASE/collection_canister/main.mo\" -o \"$BASE/dist/collection_nft.wasm\" --package core \"$CORE\" --enhanced-orthogonal-persistence --implicit-package=core -no-check-ir -A=M0198 --public-metadata candid:service --release",
+]
+out = "dist"
+
+[check]
+commands = [
+  "mops install",
+  "if [ -f src/backend/main.mo ]; then BASE=src/backend; CORE=.mops/core@2.2.0/src; else BASE=.; CORE=.mops/core@2.2.0/src; fi; \"$(mops toolchain bin moc)\" --check \"$BASE/main.mo\" --package core \"$CORE\" --actor-idl=\"$BASE/system-idl\" --enhanced-orthogonal-persistence --implicit-package=core -no-check-ir -A=M0198 && \"$(mops toolchain bin moc)\" --check \"$BASE/collection_canister/main.mo\" --package core \"$CORE\" --enhanced-orthogonal-persistence --implicit-package=core -no-check-ir -A=M0198",
+]
+
+[check.fix]
+commands = [
+  "mops install",
+  "if [ -f src/backend/main.mo ]; then BASE=src/backend; CORE=.mops/core@2.2.0/src; else BASE=.; CORE=.mops/core@2.2.0/src; fi; \"$(mops toolchain bin moc)\" --check \"$BASE/main.mo\" --package core \"$CORE\" --actor-idl=\"$BASE/system-idl\" --enhanced-orthogonal-persistence --implicit-package=core -no-check-ir -A=M0198 && \"$(mops toolchain bin moc)\" --check \"$BASE/collection_canister/main.mo\" --package core \"$CORE\" --enhanced-orthogonal-persistence --implicit-package=core -no-check-ir -A=M0198",
+]

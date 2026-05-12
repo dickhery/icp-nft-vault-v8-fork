@@ -1,0 +1,27 @@
+manifest_version = "0.1.0"
+
+[project]
+id = "icp-nft-vault"
+name = "Mintlab"
+
+[workspace]
+include = [
+  "src/frontend/src/backend-idl.ts",
+  "src/frontend/src/backend-client.ts",
+  "src/frontend/src/backend.ts",
+  "src/frontend/src/declarations/backend.did.js",
+  "src/frontend/src/declarations/backend.did.d.ts",
+  "src/**",
+  "scripts/**",
+  "caffeine.json",
+  "package.json",
+  "pnpm-lock.yaml",
+  "pnpm-workspace.yaml",
+  "tsconfig.json",
+  "mops.toml",
+  "mops.lock",
+  "project.json",
+]
+
+[canisters.frontend]
+depends_on = ["backend"]

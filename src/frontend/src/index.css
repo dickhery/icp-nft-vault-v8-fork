@@ -1,0 +1,147 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --font-display: "Bricolage Grotesque";
+    --font-body: "DM Sans";
+    --font-mono: "Geist Mono";
+    --radius: 0.625rem;
+
+    --background: 0.95 0 0;
+    --foreground: 0.08 0 0;
+    --card: 0.97 0 0;
+    --card-foreground: 0.08 0 0;
+    --popover: 0.97 0 0;
+    --popover-foreground: 0.08 0 0;
+
+    --primary: 0.55 0.12 240;
+    --primary-foreground: 0.97 0 0;
+
+    --secondary: 0.65 0.15 280;
+    --secondary-foreground: 0.95 0 0;
+    --muted: 0.92 0 0;
+    --muted-foreground: 0.45 0 0;
+
+    --accent: 0.62 0.2 290;
+    --accent-foreground: 0.97 0 0;
+
+    --destructive: 0.55 0.22 25;
+    --destructive-foreground: 0.98 0 0;
+
+    --border: 0.88 0 0;
+    --input: 0.88 0 0;
+    --ring: 0.62 0.2 290;
+
+    --chart-1: 0.62 0.2 290;
+    --chart-2: 0.55 0.12 240;
+    --chart-3: 0.72 0.18 160;
+    --chart-4: 0.68 0.22 120;
+    --chart-5: 0.58 0.2 30;
+
+    --sidebar: 0.96 0 0;
+    --sidebar-foreground: 0.08 0 0;
+    --sidebar-primary: 0.55 0.12 240;
+    --sidebar-primary-foreground: 0.97 0 0;
+    --sidebar-accent: 0.62 0.2 290;
+    --sidebar-accent-foreground: 0.97 0 0;
+    --sidebar-border: 0.88 0 0;
+    --sidebar-ring: 0.62 0.2 290;
+  }
+
+  .dark {
+    --background: 0.08 0 0;
+    --foreground: 0.93 0 0;
+    --card: 0.12 0 0;
+    --card-foreground: 0.93 0 0;
+    --popover: 0.16 0 0;
+    --popover-foreground: 0.93 0 0;
+
+    --primary: 0.68 0.18 240;
+    --primary-foreground: 0.08 0 0;
+
+    --secondary: 0.72 0.2 280;
+    --secondary-foreground: 0.92 0 0;
+    --muted: 0.2 0 0;
+    --muted-foreground: 0.65 0 0;
+
+    --accent: 0.7 0.22 290;
+    --accent-foreground: 0.08 0 0;
+
+    --destructive: 0.65 0.19 22;
+    --destructive-foreground: 0.08 0 0;
+
+    --border: 0.22 0 0;
+    --input: 0.22 0 0;
+    --ring: 0.7 0.22 290;
+
+    --chart-1: 0.7 0.22 290;
+    --chart-2: 0.68 0.18 240;
+    --chart-3: 0.78 0.2 160;
+    --chart-4: 0.75 0.25 120;
+    --chart-5: 0.68 0.22 30;
+
+    --sidebar: 0.12 0 0;
+    --sidebar-foreground: 0.93 0 0;
+    --sidebar-primary: 0.68 0.18 240;
+    --sidebar-primary-foreground: 0.08 0 0;
+    --sidebar-accent: 0.72 0.2 280;
+    --sidebar-accent-foreground: 0.93 0 0;
+    --sidebar-border: 0.22 0 0;
+    --sidebar-ring: 0.7 0.22 290;
+  }
+
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground font-body antialiased;
+  }
+}
+
+@font-face {
+  font-family: "Bricolage Grotesque";
+  src: url("/assets/fonts/BricolageGrotesque.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("/assets/fonts/DMSans.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Geist Mono";
+  src: url("/assets/fonts/GeistMono.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@layer utilities {
+  .transition-smooth {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .nft-card-glow {
+    box-shadow: inset 0 1px 2px oklch(var(--accent) / 0.1), 0 0 20px
+      oklch(var(--accent) / 0.15);
+  }
+
+  .nft-card-glow-hover {
+    box-shadow: inset 0 1px 2px oklch(var(--accent) / 0.15), 0 0 32px
+      oklch(var(--accent) / 0.25);
+  }
+
+  .price-badge {
+    @apply px-3 py-1 rounded-full text-sm font-mono font-semibold text-accent-foreground;
+    background-color: oklch(var(--accent));
+  }
+
+  .bid-typography {
+    @apply font-mono text-accent font-bold;
+  }
+}

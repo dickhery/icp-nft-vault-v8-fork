@@ -1,0 +1,5 @@
+node_modules/
+.mops/
+src/frontend/dist/
+src/backend/main.wasm
+.DS_Store

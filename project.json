@@ -1,0 +1,26 @@
+{
+  "overview": "Mintlab is a permissionless ICP NFT wallet, collection directory, and marketplace on the Internet Computer. Users can import supported collections, create their own Mintlab collections after paying the admin-set ICP fee, mint NFTs, transfer them, and participate in fixed-price and auction-based sales.",
+  "features": [
+    "Permissionless collection import for supported ICP NFT canisters",
+    "Paid creator collection setup with admin-configured ICP fee",
+    "NFT wallet showing owned NFTs by collection",
+    "Dedicated Collections browser page with search and filter by name, ID, or attributes",
+    "Full NFT detail view with metadata and register-to-wallet option",
+    "Optional ICP dividend pools for Mintlab creator collections",
+    "Fixed-price and timed auction marketplace",
+    "ICP account with balance display and transfers",
+    "Internet Identity authentication"
+  ],
+  "category": "nft-web3",
+  "tags": [
+    "nft",
+    "icp",
+    "internet-computer",
+    "wallet",
+    "marketplace",
+    "auction",
+    "collections",
+    "web3"
+  ],
+  "last_updated": "2026-04-26T14:32:12.265Z"
+}
