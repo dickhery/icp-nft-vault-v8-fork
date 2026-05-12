@@ -1,0 +1,42 @@
+// Version: 1.0.0
+type Data__791452850<K, V> =
+  {var count : Nat__490723111; kvs : [var ?(K, V)]};
+type Internal__8484328<K, V> =
+  {children : [var ?Node__46230540<K, V>]; data : Data__791452850<K, V>};
+type Leaf__809889148<K, V> = {data : Data__791452850<K, V>};
+type MintedToken__156529978 =
+  {
+    metadata : NFTMetadata__605782097;
+    mintedAt : Nat64;
+    mintedBy : Principal;
+    owner : Principal;
+    tokenId : Nat;
+    transferredAt : ?Nat64;
+    transferredBy : ?Principal
+  };
+type NFTMetadata__605782097 =
+  {
+    attributes : [(Text, Text)];
+    description : ?Text;
+    imageUrl : ?Text;
+    name : ?Text
+  };
+type Nat__490723111 = Nat__920180692;
+type Nat__920180692 = Nat;
+type Node__46230540<K, V> =
+  {#internal : Internal__8484328<K, V>; #leaf : Leaf__809889148<K, V>};
+actor {
+  stable var collectionDescription : Text;
+  stable var collectionLogo : Text;
+  stable var collectionName : Text;
+  stable collectionOwner : Principal;
+  stable var collectionSymbol : Text;
+  stable var nextTokenId : Nat;
+  stable var nextTransactionId : Nat;
+  stable parentCanister : Principal;
+  stable tokens :
+    {
+      var root : Node__46230540<Nat, MintedToken__156529978>;
+      var size : Nat__490723111
+    }
+};

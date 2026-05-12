@@ -1,0 +1,404 @@
+type SupportedStandard = 
+ record {
+   name: text;
+   url: text;
+ };
+type NFTMetadata = 
+ record {
+   attributes: vec record {
+                     text;
+                     text;
+                   };
+   description: opt text;
+   imageUrl: opt text;
+   name: opt text;
+ };
+type MintlabNFT = 
+ record {
+   metadata: NFTMetadata;
+   tokenId: nat;
+ };
+type MintlabCollection = 
+ service {
+   balance: (request: EXTBalanceRequest) -> (EXTBalanceResponse) query;
+   balanceOf: (owner: principal) -> (DIP721NatResult) query;
+   dip721_balance_of: (owner: principal) -> (DIP721NatResult) query;
+   dip721_logo: () -> (opt text) query;
+   dip721_metadata: () -> (DIP721CollectionMetadata) query;
+   dip721_name: () -> (opt text) query;
+   dip721_owner_of: (tokenId: nat) -> (DIP721PrincipalResult) query;
+   dip721_owner_token_identifiers: (owner: principal) ->
+    (DIP721TokenIdsResult) query;
+   dip721_supported_interfaces: () -> (vec DIP721SupportedInterface) query;
+   dip721_symbol: () -> (opt text) query;
+   dip721_token_metadata: (tokenId: nat) -> (DIP721TokenMetadataResult) query;
+   dip721_total_supply: () -> (nat) query;
+   dip721_transfer: (to: principal, tokenId: nat) -> (DIP721NatResult);
+   ext_balance: (request: EXTBalanceRequest) -> (EXTBalanceResponse) query;
+   ext_bearer: (tokenIdentifier: EXTTokenIdentifier) ->
+    (variant {
+       err: EXTCommonError;
+       ok: EXTAccountIdentifier;
+     }) query;
+   ext_extensions: () -> (vec text) query;
+   ext_metadata: (tokenIdentifier: EXTTokenIdentifier) ->
+    (EXTMetadataResult) query;
+   ext_transfer: (request: EXTTransferRequest) -> (EXTTransferResponse);
+   extdata_supply: (tokenIdentifier: EXTTokenIdentifier) ->
+    (variant {
+       err: EXTCommonError;
+       ok: EXTBalance;
+     }) query;
+   extensions: () -> (vec text) query;
+   getRegistry: () ->
+    (vec record {
+           EXTTokenIndex;
+           EXTAccountIdentifier;
+         }) query;
+   getTokens: () -> (vec record {
+                           EXTTokenIndex;
+                           EXTMetadataLegacy;
+                         }) query;
+   http_request: (request: HttpRequest) -> (HttpResponse) query;
+   http_request_update: (request: HttpRequest) -> (HttpResponse);
+   icrc10_supported_standards: () -> (vec SupportedStandard) query;
+   icrc7_atomic_batch_transfers: () -> (opt bool) query;
+   icrc7_balance_of: (accounts: vec ICRC7Account) -> (vec nat) query;
+   icrc7_collection_metadata: () -> (vec record {
+                                           text;
+                                           ICRC7Value;
+                                         }) query;
+   icrc7_default_take_value: () -> (opt nat) query;
+   icrc7_description: () -> (opt text) query;
+   icrc7_logo: () -> (opt text) query;
+   icrc7_max_memo_size: () -> (opt nat) query;
+   icrc7_max_query_batch_size: () -> (opt nat) query;
+   icrc7_max_take_value: () -> (opt nat) query;
+   icrc7_max_update_batch_size: () -> (opt nat) query;
+   icrc7_name: () -> (text) query;
+   icrc7_owner_of: (tokenIds: vec nat) -> (vec opt ICRC7Account) query;
+   icrc7_permitted_drift: () -> (opt nat) query;
+   icrc7_supply_cap: () -> (opt nat) query;
+   icrc7_symbol: () -> (text) query;
+   icrc7_token_metadata: (tokenIds: vec nat) ->
+    (vec opt ICRC7TokenMetadata) query;
+   icrc7_tokens: (prev: opt nat, take: opt nat) -> (vec nat) query;
+   icrc7_tokens_of: (account: ICRC7Account, prev: opt nat, take: opt nat) ->
+    (vec nat) query;
+   icrc7_total_supply: () -> (nat) query;
+   icrc7_transfer: (args: vec ICRC7TransferArg) ->
+    (vec opt ICRC7TransferResult);
+   icrc7_tx_window: () -> (opt nat) query;
+   logo: () -> (opt text) query;
+   metadata: () -> (DIP721CollectionMetadata) query;
+   mintlab_collection_owner: () -> (principal) query;
+   mintlab_mint: (to: principal, metadata: NFTMetadata) ->
+    (variant {
+       err: text;
+       ok: record {
+             tokenId: nat;
+             transactionId: nat;
+           };
+     });
+   mintlab_nfts_of: (owner: principal, prev: opt nat, take: opt nat) ->
+    (vec MintlabNFT);
+   mintlab_owner_of: (tokenIds: vec nat) -> (vec opt ICRC7Account);
+   mintlab_token_ids: (prev: opt nat, take: opt nat) -> (vec nat);
+   mintlab_transfer_from: (from: principal, to: principal, tokenId: nat) ->
+    (variant {
+       err: text;
+       ok: nat;
+     });
+   mintlab_update_collection: (name: text, description: text, symbol: 
+    text, logo: text) -> (variant {
+                            err: text;
+                            ok;
+                          });
+   name: () -> (opt text) query;
+   ownerOf: (tokenId: nat) -> (DIP721PrincipalResult) query;
+   ownerTokenIdentifiers: (owner: principal) -> (DIP721TokenIdsResult) query;
+   supply: (tokenIdentifier: EXTTokenIdentifier) ->
+    (variant {
+       err: EXTCommonError;
+       ok: EXTBalance;
+     }) query;
+   supportedInterfaces: () -> (vec DIP721SupportedInterface) query;
+   symbol: () -> (opt text) query;
+   tokenMetadata: (tokenId: nat) -> (DIP721TokenMetadataResult) query;
+   tokens_ext: (account: EXTAccountIdentifier) -> (EXTTokensExtResult) query;
+   totalSupply: () -> (nat) query;
+   transfer: (to: principal, tokenId: nat) -> (DIP721NatResult);
+ };
+type ICRC7Value = 
+ variant {
+   Array: vec ICRC7Value;
+   Blob: blob;
+   Int: int;
+   Map: vec record {
+              text;
+              ICRC7Value;
+            };
+   Nat: nat;
+   Text: text;
+ };
+type ICRC7TransferResult = 
+ variant {
+   Err: ICRC7TransferError;
+   Ok: nat;
+ };
+type ICRC7TransferError = 
+ variant {
+   CreatedInFuture: record {ledger_time: nat64;};
+   Duplicate: record {duplicate_of: nat;};
+   GenericBatchError: record {
+                        error_code: nat;
+                        message: text;
+                      };
+   GenericError: record {
+                   error_code: nat;
+                   message: text;
+                 };
+   InvalidRecipient;
+   NonExistingTokenId;
+   TooOld;
+   Unauthorized;
+ };
+type ICRC7TransferArg = 
+ record {
+   created_at_time: opt nat64;
+   from_subaccount: opt blob;
+   memo: opt blob;
+   to: ICRC7Account;
+   token_id: nat;
+ };
+type ICRC7TokenMetadata = 
+ vec record {
+       text;
+       ICRC7Value;
+     };
+type ICRC7Subaccount = blob;
+type ICRC7Account = 
+ record {
+   owner: principal;
+   subaccount: opt ICRC7Subaccount;
+ };
+type HttpResponse = 
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   status_code: nat16;
+   upgrade: bool;
+ };
+type HttpRequest = 
+ record {
+   body: blob;
+   headers: vec HeaderField;
+   method: text;
+   url: text;
+ };
+type HeaderField = 
+ record {
+   text;
+   text;
+ };
+type EXTUser = 
+ variant {
+   address: EXTAccountIdentifier;
+   "principal": principal;
+ };
+type EXTTransferResponse = 
+ variant {
+   err:
+    variant {
+      CannotNotify: EXTAccountIdentifier;
+      InsufficientBalance;
+      InvalidToken: EXTTokenIdentifier;
+      Other: text;
+      Rejected;
+      Unauthorized: EXTAccountIdentifier;
+    };
+   ok: EXTBalance;
+ };
+type EXTTransferRequest = 
+ record {
+   amount: EXTBalance;
+   from: EXTUser;
+   memo: EXTMemo;
+   notify: bool;
+   subaccount: opt EXTSubAccount;
+   to: EXTUser;
+   token: EXTTokenIdentifier;
+ };
+type EXTTokensExtResult = 
+ variant {
+   err: EXTCommonError;
+   ok: vec record {
+             EXTTokenIndex;
+             opt EXTListing;
+             opt blob;
+           };
+ };
+type EXTTokenIndex = nat32;
+type EXTTokenIdentifier = text;
+type EXTTime = int;
+type EXTSubAccount = blob;
+type EXTMetadataValue = 
+ record {
+   text;
+   variant {
+     "blob": blob;
+     "nat": nat;
+     "nat8": nat8;
+     "text": text;
+   };
+ };
+type EXTMetadataResult = 
+ variant {
+   err: EXTCommonError;
+   ok: EXTMetadata;
+ };
+type EXTMetadataLegacy = 
+ variant {
+   fungible:
+    record {
+      decimals: nat8;
+      metadata: opt blob;
+      name: text;
+      symbol: text;
+    };
+   nonfungible: record {metadata: opt blob;};
+ };
+type EXTMetadataContainer = 
+ variant {
+   "blob": blob;
+   data: vec EXTMetadataValue;
+   json: text;
+ };
+type EXTMetadata = 
+ variant {
+   fungible:
+    record {
+      decimals: nat8;
+      metadata: opt EXTMetadataContainer;
+      name: text;
+      symbol: text;
+    };
+   nonfungible:
+    record {
+      asset: text;
+      metadata: opt EXTMetadataContainer;
+      name: text;
+      thumbnail: text;
+    };
+ };
+type EXTMemo = blob;
+type EXTListing = 
+ record {
+   locked: opt EXTTime;
+   price: nat64;
+   seller: principal;
+ };
+type EXTCommonError = 
+ variant {
+   InvalidToken: EXTTokenIdentifier;
+   Other: text;
+ };
+type EXTBalanceResponse = 
+ variant {
+   err: EXTCommonError;
+   ok: EXTBalance;
+ };
+type EXTBalanceRequest = 
+ record {
+   token: EXTTokenIdentifier;
+   user: EXTUser;
+ };
+type EXTBalance = nat;
+type EXTAccountIdentifier = text;
+type DIP721TokenMetadataResult = 
+ variant {
+   Err: DIP721NftError;
+   Ok: DIP721TokenMetadata;
+ };
+type DIP721TokenMetadata = 
+ record {
+   approved_at: opt nat64;
+   approved_by: opt principal;
+   burned_at: opt nat64;
+   burned_by: opt principal;
+   is_burned: bool;
+   minted_at: nat64;
+   minted_by: principal;
+   operator: opt principal;
+   owner: opt principal;
+   properties: vec record {
+                     text;
+                     DIP721GenericValue;
+                   };
+   token_identifier: nat;
+   transferred_at: opt nat64;
+   transferred_by: opt principal;
+ };
+type DIP721TokenIdsResult = 
+ variant {
+   Err: DIP721NftError;
+   Ok: vec nat;
+ };
+type DIP721SupportedInterface = 
+ variant {
+   Approval;
+   Burn;
+   Mint;
+ };
+type DIP721PrincipalResult = 
+ variant {
+   Err: DIP721NftError;
+   Ok: opt principal;
+ };
+type DIP721NftError = 
+ variant {
+   ExistedNFT;
+   OperatorNotFound;
+   OwnerNotFound;
+   SelfApprove;
+   SelfTransfer;
+   TokenNotFound;
+   UnauthorizedOperator;
+   UnauthorizedOwner;
+ };
+type DIP721NatResult = 
+ variant {
+   Err: DIP721NftError;
+   Ok: nat;
+ };
+type DIP721GenericValue = 
+ variant {
+   BlobContent: blob;
+   BoolContent: bool;
+   IntContent: int;
+   Nat64Content: nat64;
+   NatContent: nat;
+   NestedContent: vec record {
+                        text;
+                        DIP721GenericValue;
+                      };
+   Principal: principal;
+   TextContent: text;
+ };
+type DIP721CollectionMetadata = 
+ record {
+   created_at: nat64;
+   custodians: vec principal;
+   logo: opt text;
+   name: opt text;
+   symbol: opt text;
+   upgraded_at: nat64;
+ };
+service : (init: record {
+                   description: text;
+                   logo: text;
+                   name: text;
+                   owner: principal;
+                   parent: principal;
+                   symbol: text;
+                 }) -> MintlabCollection
