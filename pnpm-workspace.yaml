@@ -1,6 +1,5 @@
 packages:
-  - src/**/*
+  - src/frontend
 onlyBuiltDependencies:
   - '@biomejs/biome'
   - esbuild
-  - sharp

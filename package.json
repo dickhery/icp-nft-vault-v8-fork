@@ -13,9 +13,6 @@
     "fix": "pnpm -r --if-present run fix",
     "bindgen": "node scripts/bindgen.mjs"
   },
-  "devDependencies": {
-    "sharp": "^0.34.4"
-  },
   "dependencies": {
     "@caffeineai/core-infrastructure": "^0.2.0"
   }
