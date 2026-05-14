@@ -461,6 +461,7 @@ function AuctionListingCard({
   const name = nft?.metadata.name ?? `NFT #${nft?.tokenId ?? "?"}`;
   const sellerText = listing.seller.toString();
   const isOwner = currentPrincipal === sellerText;
+  const isWinner = listing.highestBidder?.toString() === currentPrincipal;
 
   return (
     <motion.div
@@ -569,22 +570,33 @@ function AuctionListingCard({
                 </Button>
               )}
             </div>
-          ) : (
-            !ended && (
-              <Button
-                size="sm"
-                className="bg-accent text-accent-foreground hover:bg-accent/90 transition-smooth shrink-0 font-semibold"
-                onClick={(event) => {
-                  event.stopPropagation();
-                  onBid(listing);
-                }}
-                data-ocid={`marketplace.auction.bid_button.${index + 1}`}
-              >
-                <Gavel className="w-3 h-3 mr-1" />
-                Bid
-              </Button>
-            )
-          )}
+          ) : ended && isWinner ? (
+            <Button
+              size="sm"
+              className="bg-primary text-primary-foreground hover:bg-primary/90 transition-smooth font-semibold shrink-0"
+              onClick={(event) => {
+                event.stopPropagation();
+                onSettle(listing.id);
+              }}
+              disabled={isSettling}
+              data-ocid={`marketplace.auction.collect_button.${index + 1}`}
+            >
+              {isSettling ? <LoadingSpinner size="sm" /> : "Collect"}
+            </Button>
+          ) : !ended ? (
+            <Button
+              size="sm"
+              className="bg-accent text-accent-foreground hover:bg-accent/90 transition-smooth shrink-0 font-semibold"
+              onClick={(event) => {
+                event.stopPropagation();
+                onBid(listing);
+              }}
+              data-ocid={`marketplace.auction.bid_button.${index + 1}`}
+            >
+              <Gavel className="w-3 h-3 mr-1" />
+              Bid
+            </Button>
+          ) : null}
         </div>
       </div>
     </motion.div>

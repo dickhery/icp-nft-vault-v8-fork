@@ -42,7 +42,6 @@ import type {
 import { Principal } from "@icp-sdk/core/principal";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Archive,
   ArrowUpRight,
   Check,
   CheckCircle2,
@@ -684,179 +683,6 @@ function RegisterNFTModal({
         </div>
       </DialogContent>
     </Dialog>
-  );
-}
-
-function VaultDepositCard({
-  collections,
-  vaultPrincipalText,
-  vaultAccountIdHex,
-}: {
-  collections: Collection[];
-  vaultPrincipalText: string | null;
-  vaultAccountIdHex: string | null;
-}) {
-  const { actor } = useBackend();
-  const queryClient = useQueryClient();
-  const externalCollections = collections.filter(
-    (collection) => collection.kind === "External",
-  );
-  const [collectionId, setCollectionId] = useState<string>(
-    externalCollections[0]?.id.toString() ?? "",
-  );
-  const [tokenId, setTokenId] = useState("");
-
-  useEffect(() => {
-    if (!collectionId && externalCollections[0]) {
-      setCollectionId(externalCollections[0].id.toString());
-    }
-  }, [collectionId, externalCollections]);
-
-  const prepareMutation = useMutation({
-    mutationFn: async () => {
-      if (!actor) throw new Error("Not connected");
-      if (!collectionId) throw new Error("Choose a collection first");
-      if (!tokenId.trim()) throw new Error("Token ID is required");
-      const result = await actor.prepareVaultDeposit(
-        BigInt(collectionId),
-        tokenId.trim(),
-      );
-      if (result.__kind__ === "err") throw new Error(result.err);
-      return result.ok;
-    },
-    onSuccess: (message) => {
-      toast.success(message);
-    },
-    onError: (err: unknown) => {
-      toast.error(extractError(err));
-    },
-  });
-
-  const claimMutation = useMutation({
-    mutationFn: async () => {
-      if (!actor) throw new Error("Not connected");
-      if (!collectionId) throw new Error("Choose a collection first");
-      if (!tokenId.trim()) throw new Error("Token ID is required");
-      const result = await actor.claimVaultDeposit(
-        BigInt(collectionId),
-        tokenId.trim(),
-      );
-      if (result.__kind__ === "err") throw new Error(result.err);
-      return result.ok;
-    },
-    onSuccess: () => {
-      toast.success("NFT deposited into the app vault");
-      void queryClient.invalidateQueries({ queryKey: ["userNFTs"] });
-      void queryClient.invalidateQueries({ queryKey: ["userStats"] });
-      setTokenId("");
-    },
-    onError: (err: unknown) => {
-      toast.error(extractError(err));
-    },
-  });
-
-  return (
-    <Card className="border-border bg-card">
-      <CardHeader className="space-y-1">
-        <CardTitle className="text-base flex items-center gap-2">
-          <Archive className="w-4 h-4 text-accent" />
-          Vault Deposit
-        </CardTitle>
-        <p className="text-sm text-muted-foreground">
-          Send a supported external NFT to the app vault, then claim it into
-          your in-app wallet as a vaulted asset. Preparing first is optional,
-          but helps reserve the token for your account before it arrives.
-        </p>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {externalCollections.length === 0 ? (
-          <p className="text-sm text-muted-foreground">
-            No external collections are enabled yet.
-          </p>
-        ) : (
-          <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label>Collection</Label>
-                <Select value={collectionId} onValueChange={setCollectionId}>
-                  <SelectTrigger data-ocid="wallet.deposit.collection_select">
-                    <SelectValue placeholder="Choose a supported collection" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {externalCollections.map((collection) => (
-                      <SelectItem
-                        key={collection.id.toString()}
-                        value={collection.id.toString()}
-                      >
-                        {collection.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label htmlFor="deposit-token-id">Token ID</Label>
-                <Input
-                  id="deposit-token-id"
-                  value={tokenId}
-                  onChange={(e) => setTokenId(e.target.value)}
-                  placeholder="e.g. 1234"
-                  data-ocid="wallet.deposit.token_input"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {vaultPrincipalText && (
-                <CopyField
-                  label="Vault Principal"
-                  value={vaultPrincipalText}
-                  ocid="wallet.deposit.vault_principal_copy"
-                />
-              )}
-              {vaultAccountIdHex && (
-                <CopyField
-                  label="Vault Account ID"
-                  value={vaultAccountIdHex}
-                  ocid="wallet.deposit.vault_account_copy"
-                />
-              )}
-            </div>
-
-            <div className="rounded-xl border border-accent/20 bg-accent/5 p-3 text-xs text-muted-foreground">
-              If the NFT has not been sent yet, click{" "}
-              <strong className="text-foreground">Prepare deposit</strong>, then
-              send it from your external wallet to the vault principal. If it
-              was already sent, skip prepare and click{" "}
-              <strong className="text-foreground">Claim deposit</strong> to
-              register the vaulted NFT inside the app.
-            </div>
-
-            <div className="flex flex-wrap gap-2 justify-end">
-              <Button
-                variant="outline"
-                onClick={() => prepareMutation.mutate()}
-                disabled={
-                  prepareMutation.isPending || !collectionId || !tokenId.trim()
-                }
-                data-ocid="wallet.deposit.prepare_button"
-              >
-                {prepareMutation.isPending ? "Preparing…" : "Prepare Deposit"}
-              </Button>
-              <Button
-                onClick={() => claimMutation.mutate()}
-                disabled={
-                  claimMutation.isPending || !collectionId || !tokenId.trim()
-                }
-                data-ocid="wallet.deposit.claim_button"
-              >
-                {claimMutation.isPending ? "Claiming…" : "Claim Deposit"}
-              </Button>
-            </div>
-          </>
-        )}
-      </CardContent>
-    </Card>
   );
 }
 
@@ -1732,24 +1558,6 @@ export default function WalletPage() {
     enabled: !!actor && !isFetching && isAuthenticated,
   });
 
-  const { data: vaultPrincipal } = useQuery<Principal | null>({
-    queryKey: ["vaultPrincipal"],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getVaultPrincipal();
-    },
-    enabled: !!actor && !isFetching && isAuthenticated,
-  });
-
-  const { data: vaultAccountIdBytes } = useQuery<Uint8Array | null>({
-    queryKey: ["vaultAccountId"],
-    queryFn: async () => {
-      if (!actor) return null;
-      return actor.getVaultAccountId();
-    },
-    enabled: !!actor && !isFetching && isAuthenticated,
-  });
-
   const { data: mintConfig } = useQuery<MintConfig | null>({
     queryKey: ["mintConfig"],
     queryFn: async () => {
@@ -1801,10 +1609,6 @@ export default function WalletPage() {
   // ── derived data ─────────────────────────────────────────────────────────
 
   const accountIdHex = accountIdBytes ? accountIdToHex(accountIdBytes) : null;
-  const vaultPrincipalText = vaultPrincipal?.toString() ?? null;
-  const vaultAccountIdHex = vaultAccountIdBytes
-    ? accountIdToHex(vaultAccountIdBytes)
-    : null;
   const listedNFTKeys = new Set(
     activeListingDetails
       .filter((detail) => {
@@ -2016,12 +1820,6 @@ export default function WalletPage() {
         accountIdHex={accountIdHex}
         onSync={handleSync}
         syncStatus={syncStatus}
-      />
-
-      <VaultDepositCard
-        collections={collections ?? []}
-        vaultPrincipalText={vaultPrincipalText}
-        vaultAccountIdHex={vaultAccountIdHex}
       />
 
       <MintComposer

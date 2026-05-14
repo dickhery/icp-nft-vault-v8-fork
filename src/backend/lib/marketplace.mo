@@ -159,6 +159,24 @@ module {
     Map.get(state.pendingRefunds, Nat.compare, escrowId);
   };
 
+  public func findPendingAuctionEscrow(
+    state : MarketplacePaymentState,
+    listingId : Types.ListingId,
+    bidder : Types.UserId,
+    amount : Nat64,
+  ) : ?Types.AuctionEscrow {
+    for ((_, escrow) in Map.entries(state.pendingRefunds)) {
+      if (
+        escrow.listingId == listingId and
+        Principal.equal(escrow.bidder, bidder) and
+        escrow.amount == amount
+      ) {
+        return ?escrow;
+      };
+    };
+    null;
+  };
+
   public func getPendingRefundsByBidder(
     state : MarketplacePaymentState,
     bidder : Types.UserId,
