@@ -48,7 +48,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
       {/* Header */}
       <header
         className="sticky top-0 z-50 bg-card border-b border-border"
-        style={{ boxShadow: "0 1px 24px oklch(0.7 0.22 290 / 0.08)" }}
+        style={{ boxShadow: "0 1px 24px oklch(0.72 0.26 148 / 0.10)" }}
       >
         <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4">
           {/* Logo */}

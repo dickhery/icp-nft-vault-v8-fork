@@ -7,7 +7,7 @@ var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot
 var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), setter ? setter.call(obj, value) : member.set(obj, value), value);
 var __privateMethod = (obj, member, method) => (__accessCheck(obj, member, "access private method"), method);
 var _client, _currentResult, _currentMutation, _mutateOptions, _MutationObserver_instances, updateResult_fn, notify_fn, _a;
-import { v as Subscribable, w as shallowEqualObjects, x as hashKey, y as getDefaultState, z as notifyManager, d as useQueryClient, r as reactExports, D as noop, E as shouldThrowError, j as jsxRuntimeExports, F as React, H as composeRefs, s as reactDomExports, g as useComposedRefs, I as ReactDOM, a as cn, J as createSlot$1, K as Slot$1, M as cva } from "./index-DngK8SgJ.js";
+import { w as Subscribable, x as shallowEqualObjects, y as hashKey, z as getDefaultState, D as notifyManager, d as useQueryClient, r as reactExports, E as noop, F as shouldThrowError, j as jsxRuntimeExports, H as React, I as composeRefs, t as reactDomExports, g as useComposedRefs, J as ReactDOM, a as cn, K as createSlot$1, M as Slot$1, N as cva } from "./index-C71bI6gW.js";
 var MutationObserver$1 = (_a = class extends Subscribable {
   constructor(client, options) {
     super();

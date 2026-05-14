@@ -1,4 +1,4 @@
-const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/WalletPage-c5I0Gjd_.js","assets/AppCanisterTopUpDialog-ClDKsOg5.js","assets/dialog-Dm5T7_x3.js","assets/badge-BYgMj4sx.js","assets/plus-DMZ2r3_v.js","assets/PriceDisplay-Cq44yU2V.js","assets/media-JcaPzrnE.js","assets/MediaImage-s_aK6QNi.js","assets/PaymentConfirmationDialog-DpeHg7fC.js","assets/index-CYvSbtd2.js","assets/card-CG3QmFTN.js","assets/textarea-rSDADsJr.js","assets/skeleton-Cy8QzKhT.js","assets/send-Iqo9Pr8Z.js","assets/coins-C4PLBZuJ.js","assets/sparkles-QpqMH6el.js","assets/MarketplacePage-BGfCjdQv.js","assets/AdminPage-CaIP7oHW.js","assets/switch-D-14nziw.js","assets/circle-alert-CmDq1s66.js","assets/ICPAccountPage-Dnpb_qOW.js","assets/CollectionsPage-lznb46OR.js","assets/DividendsPage-CGDYHx9W.js"])))=>i.map(i=>d[i]);
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/WalletPage-CkSE31u2.js","assets/AppCanisterTopUpDialog-YQix8Ufz.js","assets/dialog-BIIqjVvo.js","assets/badge-Chchxgvx.js","assets/plus-DfwTHhHr.js","assets/PriceDisplay-qssrARfM.js","assets/media-BUtul1vm.js","assets/MediaImage-DBL69kJb.js","assets/PaymentConfirmationDialog-DrHIa_et.js","assets/index-Vk_nqGrH.js","assets/card-IDTguvk9.js","assets/textarea-BPWjsvS8.js","assets/skeleton-5N31WYcW.js","assets/send-C9qpY2rb.js","assets/coins-h1iwneF3.js","assets/sparkles-DyJbPcsS.js","assets/MarketplacePage-DAwlZkNt.js","assets/AdminPage-U9pTJ2ud.js","assets/switch-ec_z04-i.js","assets/circle-alert-C2n_DQre.js","assets/ICPAccountPage-DZOO9Qbv.js","assets/CollectionsPage-CgLOikuC.js","assets/DividendsPage-N5rzesqh.js"])))=>i.map(i=>d[i]);
 var __defProp = Object.defineProperty;
 var __typeError = (msg) => {
   throw TypeError(msg);
@@ -31206,9 +31206,13 @@ function fromSyncResult(value) {
   return { __kind__: "err", err: value.err };
 }
 class Backend {
-  constructor(actor, _uploadFile, _downloadFile, processError2) {
+  constructor(actor, _uploadFile, _downloadFile, agent, processError2) {
     this.actor = actor;
+    this.agent = agent;
     this.processError = processError2;
+  }
+  getAgent() {
+    return this.agent;
   }
   async run(operation) {
     if (!this.processError) {
@@ -31636,7 +31640,13 @@ function createActor(canisterId, uploadFile, downloadFile, options = {}) {
     canisterId,
     ...options.actorOptions
   });
-  return new Backend(actor, uploadFile, downloadFile, options.processError);
+  return new Backend(
+    actor,
+    uploadFile,
+    downloadFile,
+    agent,
+    options.processError
+  );
 }
 function useBackend() {
   const { actor, isFetching } = useActor(createActor);
@@ -45221,7 +45231,7 @@ function Layout({ children }) {
       "header",
       {
         className: "sticky top-0 z-50 bg-card border-b border-border",
-        style: { boxShadow: "0 1px 24px oklch(0.7 0.22 290 / 0.08)" },
+        style: { boxShadow: "0 1px 24px oklch(0.72 0.26 148 / 0.10)" },
         children: [
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "max-w-7xl mx-auto px-4 h-16 flex items-center justify-between gap-4", children: [
             /* @__PURE__ */ jsxRuntimeExports.jsxs(
@@ -45757,13 +45767,13 @@ const Toaster = ({ ...props }) => {
     }
   );
 };
-const WalletPage = reactExports.lazy(() => __vitePreload(() => import("./WalletPage-c5I0Gjd_.js"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]) : void 0));
-const MarketplacePage = reactExports.lazy(() => __vitePreload(() => import("./MarketplacePage-BGfCjdQv.js"), true ? __vite__mapDeps([16,5,6,7,8,9,3,2,14]) : void 0));
-const AdminPage = reactExports.lazy(() => __vitePreload(() => import("./AdminPage-CaIP7oHW.js"), true ? __vite__mapDeps([17,9,3,10,11,12,18,6,4,19]) : void 0));
-const ICPAccountPage = reactExports.lazy(() => __vitePreload(() => import("./ICPAccountPage-Dnpb_qOW.js"), true ? __vite__mapDeps([20,3,10,2,12,13,19]) : void 0));
-const LandingPage = reactExports.lazy(() => __vitePreload(() => import("./LandingPage-BNvGj74t.js"), true ? [] : void 0));
-const CollectionsPage = reactExports.lazy(() => __vitePreload(() => import("./CollectionsPage-lznb46OR.js"), true ? __vite__mapDeps([21,1,2,3,4,7,6,8,9,10,11,12,18,15]) : void 0));
-const DividendsPage = reactExports.lazy(() => __vitePreload(() => import("./DividendsPage-CGDYHx9W.js"), true ? __vite__mapDeps([22,1,2,3,4,7,6,10,14]) : void 0));
+const WalletPage = reactExports.lazy(() => __vitePreload(() => import("./WalletPage-CkSE31u2.js"), true ? __vite__mapDeps([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]) : void 0));
+const MarketplacePage = reactExports.lazy(() => __vitePreload(() => import("./MarketplacePage-DAwlZkNt.js"), true ? __vite__mapDeps([16,5,6,7,8,9,3,2,14]) : void 0));
+const AdminPage = reactExports.lazy(() => __vitePreload(() => import("./AdminPage-U9pTJ2ud.js"), true ? __vite__mapDeps([17,9,3,10,11,12,18,6,4,19]) : void 0));
+const ICPAccountPage = reactExports.lazy(() => __vitePreload(() => import("./ICPAccountPage-DZOO9Qbv.js"), true ? __vite__mapDeps([20,3,10,2,12,13,19]) : void 0));
+const LandingPage = reactExports.lazy(() => __vitePreload(() => import("./LandingPage-C8nIIzA0.js"), true ? [] : void 0));
+const CollectionsPage = reactExports.lazy(() => __vitePreload(() => import("./CollectionsPage-CgLOikuC.js"), true ? __vite__mapDeps([21,1,2,3,4,7,6,8,9,10,11,12,18,15]) : void 0));
+const DividendsPage = reactExports.lazy(() => __vitePreload(() => import("./DividendsPage-N5rzesqh.js"), true ? __vite__mapDeps([22,1,2,3,4,7,6,10,14]) : void 0));
 const rootRoute = createRootRoute({
   component: () => /* @__PURE__ */ jsxRuntimeExports.jsx(Layout, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(
     reactExports.Suspense,
@@ -45832,19 +45842,20 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   /* @__PURE__ */ jsxRuntimeExports.jsx(QueryClientProvider, { client: queryClient, children: /* @__PURE__ */ jsxRuntimeExports.jsx(InternetIdentityProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(App, {}) }) })
 );
 export {
-  AnimatePresence as A,
+  Actor as A,
   Button as B,
   CircleDollarSign as C,
-  noop$7 as D,
-  shouldThrowError as E,
-  React$4 as F,
+  notifyManager as D,
+  noop$7 as E,
+  shouldThrowError as F,
   Grid3x3 as G,
-  composeRefs$1 as H,
-  ReactDOM$2 as I,
-  createSlot as J,
-  Slot as K,
+  React$4 as H,
+  composeRefs$1 as I,
+  ReactDOM$2 as J,
+  createSlot as K,
   LogIn as L,
-  cva as M,
+  Slot as M,
+  cva as N,
   Principal$1 as P,
   QueryObserver as Q,
   React2 as R,
@@ -45870,12 +45881,12 @@ export {
   hasNextPage as p,
   useBaseQuery as q,
   reactExports as r,
-  reactDomExports as s,
-  buttonVariants as t,
+  AnimatePresence as s,
+  reactDomExports as t,
   useAuth as u,
-  Subscribable as v,
-  shallowEqualObjects as w,
-  hashKey as x,
-  getDefaultState as y,
-  notifyManager as z
+  buttonVariants as v,
+  Subscribable as w,
+  shallowEqualObjects as x,
+  hashKey as y,
+  getDefaultState as z
 };

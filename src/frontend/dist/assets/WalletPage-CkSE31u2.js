@@ -1,19 +1,19 @@
-import { c as createLucideIcon, j as jsxRuntimeExports, m as motion, a as cn, u as useAuth, b as useBackend, d as useQueryClient, r as reactExports, e as useQuery, f as ue, W as Wallet, B as Button, L as LogIn, P as Principal } from "./index-DngK8SgJ.js";
-import { A as AppCanisterTopUpDialog, i as isLowCyclesError } from "./AppCanisterTopUpDialog-ClDKsOg5.js";
-import { C as CollectionBadge, P as PriceDisplay } from "./PriceDisplay-Cq44yU2V.js";
-import { M as MediaImage, E as EmptyState } from "./MediaImage-s_aK6QNi.js";
-import { B as Badge, u as useMutation, L as Label, I as Input } from "./badge-BYgMj4sx.js";
-import { I as ImageOff, r as resolveImageUrl } from "./media-JcaPzrnE.js";
-import { P as PaymentConfirmationDialog, T as Tag } from "./PaymentConfirmationDialog-DpeHg7fC.js";
-import { R as RefreshCw, C as Card, a as CardHeader, b as CardTitle, c as CardContent } from "./card-CG3QmFTN.js";
-import { D as Dialog, a as DialogContent, b as DialogHeader, c as DialogTitle } from "./dialog-Dm5T7_x3.js";
-import { L as Layers, C as Check, I as Info, S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem, T as Textarea, E as ExternalLink } from "./textarea-rSDADsJr.js";
-import { S as Skeleton, C as Copy } from "./skeleton-Cy8QzKhT.js";
-import { C as CircleCheck, S as Send } from "./send-Iqo9Pr8Z.js";
-import { C as Coins } from "./coins-C4PLBZuJ.js";
-import { P as Plus } from "./plus-DMZ2r3_v.js";
-import { S as Sparkles } from "./sparkles-QpqMH6el.js";
-import "./index-CYvSbtd2.js";
+import { c as createLucideIcon, j as jsxRuntimeExports, m as motion, a as cn, A as Actor, u as useAuth, b as useBackend, d as useQueryClient, r as reactExports, e as useQuery, f as ue, W as Wallet, B as Button, L as LogIn, P as Principal } from "./index-C71bI6gW.js";
+import { A as AppCanisterTopUpDialog, i as isLowCyclesError } from "./AppCanisterTopUpDialog-YQix8Ufz.js";
+import { C as CollectionBadge, P as PriceDisplay } from "./PriceDisplay-qssrARfM.js";
+import { M as MediaImage, E as EmptyState } from "./MediaImage-DBL69kJb.js";
+import { B as Badge, u as useMutation, L as Label, I as Input } from "./badge-Chchxgvx.js";
+import { I as ImageOff, r as resolveImageUrl } from "./media-BUtul1vm.js";
+import { P as PaymentConfirmationDialog, T as Tag } from "./PaymentConfirmationDialog-DrHIa_et.js";
+import { R as RefreshCw, C as Card, a as CardHeader, b as CardTitle, c as CardContent } from "./card-IDTguvk9.js";
+import { D as Dialog, a as DialogContent, b as DialogHeader, c as DialogTitle } from "./dialog-BIIqjVvo.js";
+import { L as Layers, C as Check, I as Info, S as Select, a as SelectTrigger, b as SelectValue, c as SelectContent, d as SelectItem, T as Textarea, E as ExternalLink } from "./textarea-BPWjsvS8.js";
+import { S as Skeleton, C as Copy } from "./skeleton-5N31WYcW.js";
+import { C as CircleCheck, S as Send } from "./send-C9qpY2rb.js";
+import { C as Coins } from "./coins-h1iwneF3.js";
+import { P as Plus } from "./plus-DfwTHhHr.js";
+import { S as Sparkles } from "./sparkles-DyJbPcsS.js";
+import "./index-Vk_nqGrH.js";
 /**
  * @license lucide-react v0.511.0 - ISC
  *
@@ -135,6 +135,273 @@ function formatCompactICP(e8s) {
   const trimmed = frac.replace(/0+$/, "");
   return trimmed ? `${whole}.${trimmed}` : whole.toString();
 }
+const extIdlFactory = ({ IDL: idl }) => {
+  const AccountUser = idl.Variant({
+    principal: idl.Principal,
+    address: idl.Text
+  });
+  const TransferRequest = idl.Record({
+    to: AccountUser,
+    token: idl.Text,
+    notify: idl.Bool,
+    from: AccountUser,
+    memo: idl.Vec(idl.Nat8),
+    subaccount: idl.Opt(idl.Vec(idl.Nat8)),
+    amount: idl.Nat
+  });
+  const TransferError = idl.Variant({
+    CannotNotify: idl.Text,
+    InsufficientBalance: idl.Null,
+    InvalidToken: idl.Text,
+    Rejected: idl.Null,
+    Unauthorized: idl.Text,
+    Other: idl.Text
+  });
+  const TransferResponse = idl.Variant({
+    ok: idl.Nat,
+    err: TransferError
+  });
+  return idl.Service({
+    ext_transfer: idl.Func([TransferRequest], [TransferResponse], []),
+    transfer: idl.Func([TransferRequest], [TransferResponse], [])
+  });
+};
+const dip721IdlFactory = ({ IDL: idl }) => {
+  const Dip721Error = idl.Variant({
+    Unauthorized: idl.Null,
+    InvalidTokenId: idl.Null,
+    ZeroAddress: idl.Null,
+    Other: idl.Text,
+    ExistedNFT: idl.Null,
+    SelfTransfer: idl.Null,
+    TokenNotFound: idl.Null,
+    OwnerNotFound: idl.Null,
+    OperatorNotFound: idl.Null,
+    SelfApprove: idl.Null,
+    UnauthorizedOwner: idl.Null,
+    UnauthorizedOperator: idl.Null
+  });
+  const NatResult = idl.Variant({
+    Ok: idl.Nat,
+    Err: Dip721Error
+  });
+  return idl.Service({
+    transfer: idl.Func([idl.Principal, idl.Nat], [NatResult], []),
+    dip721_transfer: idl.Func([idl.Principal, idl.Nat], [NatResult], []),
+    transferFromDip721: idl.Func(
+      [idl.Principal, idl.Principal, idl.Nat],
+      [NatResult],
+      []
+    )
+  });
+};
+const icrc7IdlFactory = ({ IDL: idl }) => {
+  const Account = idl.Record({
+    owner: idl.Principal,
+    subaccount: idl.Opt(idl.Vec(idl.Nat8))
+  });
+  const TransferArg = idl.Record({
+    from_subaccount: idl.Opt(idl.Vec(idl.Nat8)),
+    to: Account,
+    token_id: idl.Nat,
+    memo: idl.Opt(idl.Vec(idl.Nat8)),
+    created_at_time: idl.Opt(idl.Nat64)
+  });
+  const TransferError = idl.Variant({
+    NonExistingTokenId: idl.Null,
+    InvalidRecipient: idl.Null,
+    Unauthorized: idl.Null,
+    TooOld: idl.Null,
+    CreatedInFuture: idl.Record({ ledger_time: idl.Nat64 }),
+    Duplicate: idl.Record({ duplicate_of: idl.Nat }),
+    GenericError: idl.Record({
+      error_code: idl.Nat,
+      message: idl.Text
+    }),
+    GenericBatchError: idl.Record({
+      error_code: idl.Nat,
+      message: idl.Text
+    })
+  });
+  const TransferResult = idl.Variant({
+    Ok: idl.Nat,
+    Err: TransferError
+  });
+  return idl.Service({
+    icrc7_transfer: idl.Func(
+      [idl.Vec(TransferArg)],
+      [idl.Vec(idl.Opt(TransferResult))],
+      []
+    )
+  });
+};
+async function transferRegisteredNFT({
+  agent,
+  collection,
+  nft,
+  owner,
+  recipient
+}) {
+  if (nft.location !== "Registered") {
+    throw new Error("Only registered external NFTs use direct wallet transfer");
+  }
+  if (collection.kind !== "External") {
+    throw new Error("Only imported external collections use direct transfer");
+  }
+  if (nft.owner.toString() !== owner.toString()) {
+    throw new Error("This NFT is registered under a different principal");
+  }
+  switch (collection.standard.__kind__) {
+    case "EXT":
+      await transferExtNFT(agent, collection, nft, owner, recipient);
+      return "External NFT transferred successfully";
+    case "DIP721":
+      await transferDip721NFT(agent, collection, nft, owner, recipient);
+      return "DIP721 NFT transferred successfully";
+    case "ICRC7":
+      await transferIcrc7NFT(agent, collection, nft, recipient);
+      return "ICRC-7 NFT transferred successfully";
+    case "Other":
+      throw new Error(
+        `Direct transfer is not supported for ${collection.standard.Other} collections yet`
+      );
+  }
+}
+async function transferExtNFT(agent, collection, nft, owner, recipient) {
+  const actor = Actor.createActor(extIdlFactory, {
+    agent,
+    canisterId: collection.canisterId.toString()
+  });
+  const request = {
+    from: { principal: owner },
+    to: { principal: recipient },
+    token: nft.tokenId,
+    amount: 1n,
+    memo: new Uint8Array(),
+    notify: false,
+    subaccount: []
+  };
+  let lastError = "EXT transfer method not available";
+  for (const method of ["ext_transfer", "transfer"]) {
+    try {
+      const result = await actor[method](request);
+      if ("ok" in result) {
+        return;
+      }
+      lastError = `EXT transfer rejected: ${extTransferErrorToText(result.err)}`;
+    } catch (error) {
+      lastError = `Transfer call failed: ${errorMessage(error)}`;
+    }
+  }
+  throw new Error(lastError);
+}
+async function transferDip721NFT(agent, collection, nft, owner, recipient) {
+  const actor = Actor.createActor(dip721IdlFactory, {
+    agent,
+    canisterId: collection.canisterId.toString()
+  });
+  const tokenId = parseTokenNat(nft.tokenId, "DIP721");
+  let lastError = "DIP721 transfer method not available";
+  for (const transferCall of [
+    () => actor.transfer(recipient, tokenId),
+    () => actor.dip721_transfer(recipient, tokenId),
+    () => actor.transferFromDip721(owner, recipient, tokenId)
+  ]) {
+    try {
+      const result = await transferCall();
+      if ("Ok" in result) {
+        return;
+      }
+      lastError = `DIP721 transfer rejected: ${dip721ErrorToText(result.Err)}`;
+    } catch (error) {
+      lastError = `Transfer call failed: ${errorMessage(error)}`;
+    }
+  }
+  throw new Error(lastError);
+}
+async function transferIcrc7NFT(agent, collection, nft, recipient) {
+  const actor = Actor.createActor(icrc7IdlFactory, {
+    agent,
+    canisterId: collection.canisterId.toString()
+  });
+  const tokenId = parseTokenNat(nft.tokenId, "ICRC-7");
+  const result = await actor.icrc7_transfer([
+    {
+      from_subaccount: [],
+      to: {
+        owner: recipient,
+        subaccount: []
+      },
+      token_id: tokenId,
+      memo: [],
+      created_at_time: []
+    }
+  ]);
+  if (result.length === 0 || result[0].length === 0) {
+    throw new Error("ICRC-7 transfer was not processed");
+  }
+  const transferResult = result[0][0];
+  if ("Err" in transferResult) {
+    throw new Error(
+      `ICRC-7 transfer rejected: ${icrc7TransferErrorToText(transferResult.Err)}`
+    );
+  }
+}
+function parseTokenNat(tokenId, standard) {
+  try {
+    const parsed = BigInt(tokenId);
+    if (parsed < 0n) {
+      throw new Error("negative token ID");
+    }
+    return parsed;
+  } catch {
+    throw new Error(`Invalid ${standard} token ID`);
+  }
+}
+function errorMessage(error) {
+  if (error instanceof Error) {
+    return error.message;
+  }
+  return String(error);
+}
+function extTransferErrorToText(error) {
+  if ("CannotNotify" in error) return "The recipient could not be notified";
+  if ("InsufficientBalance" in error) return "Insufficient balance";
+  if ("InvalidToken" in error) return `Invalid token: ${error.InvalidToken}`;
+  if ("Rejected" in error)
+    return "Transfer rejected by the collection canister";
+  if ("Unauthorized" in error) return "Unauthorized";
+  return error.Other;
+}
+function dip721ErrorToText(error) {
+  if ("Unauthorized" in error) return "Unauthorized";
+  if ("InvalidTokenId" in error) return "Invalid token ID";
+  if ("ZeroAddress" in error) return "Cannot transfer to the zero address";
+  if ("Other" in error) return error.Other;
+  if ("ExistedNFT" in error) return "NFT already exists";
+  if ("SelfTransfer" in error)
+    return "Cannot transfer an NFT to the same owner";
+  if ("TokenNotFound" in error) return "Token not found";
+  if ("OwnerNotFound" in error) return "Owner not found";
+  if ("OperatorNotFound" in error) return "Operator not found";
+  if ("SelfApprove" in error) return "Cannot approve yourself";
+  if ("UnauthorizedOwner" in error) return "Unauthorized owner";
+  return "Unauthorized operator";
+}
+function icrc7TransferErrorToText(error) {
+  if ("NonExistingTokenId" in error) return "Token does not exist";
+  if ("InvalidRecipient" in error) return "Invalid recipient";
+  if ("Unauthorized" in error) return "Unauthorized";
+  if ("TooOld" in error) return "Transfer request is too old";
+  if ("CreatedInFuture" in error) {
+    return `Transfer timestamp is in the future relative to ledger time ${error.CreatedInFuture.ledger_time.toString()}`;
+  }
+  if ("Duplicate" in error) {
+    return `Duplicate transfer detected at transaction ${error.Duplicate.duplicate_of.toString()}`;
+  }
+  if ("GenericError" in error) return error.GenericError.message;
+  return error.GenericBatchError.message;
+}
 function accountIdToHex(bytes) {
   return Array.from(bytes).map((b) => b.toString(16).padStart(2, "0")).join("");
 }
@@ -221,10 +488,12 @@ function CopyField({ label, value, ocid }) {
 }
 function SendNFTModal({ open, onClose, nft, collection }) {
   const { actor } = useBackend();
+  const { principal } = useAuth();
   const queryClient = useQueryClient();
   const [recipient, setRecipient] = reactExports.useState("");
   const [recipientError, setRecipientError] = reactExports.useState("");
   const nftName = nft.metadata.name ?? `NFT #${nft.tokenId}`;
+  const isRegisteredExternal = nft.location === "Registered";
   function validateRecipient(value) {
     if (!value.trim()) return "Recipient Principal ID is required";
     try {
@@ -240,6 +509,32 @@ function SendNFTModal({ open, onClose, nft, collection }) {
       const err = validateRecipient(recipient);
       if (err) throw new Error(err);
       const recipientPrincipal = Principal.fromText(recipient.trim());
+      if (isRegisteredExternal) {
+        if (!collection) {
+          throw new Error(
+            "Collection information is required for this transfer"
+          );
+        }
+        if (!principal) {
+          throw new Error("You must be logged in to send this NFT");
+        }
+        const message = await transferRegisteredNFT({
+          agent: actor.getAgent(),
+          collection,
+          nft,
+          owner: principal,
+          recipient: recipientPrincipal
+        });
+        try {
+          const syncResult = await actor.syncUserNFTs();
+          if (syncResult.__kind__ === "err") {
+            console.warn("[sendNFT] wallet sync failed:", syncResult.err);
+          }
+        } catch (syncError) {
+          console.warn("[sendNFT] wallet sync failed:", syncError);
+        }
+        return message;
+      }
       const result = await actor.sendNFT(nft.id, recipientPrincipal);
       if (result.__kind__ === "err") {
         throw new Error(result.err);
@@ -247,7 +542,7 @@ function SendNFTModal({ open, onClose, nft, collection }) {
       return result.ok;
     },
     onSuccess: (txId) => {
-      ue.success(`NFT sent successfully! Transaction: ${txId}`);
+      ue.success(txId || "NFT sent successfully");
       queryClient.invalidateQueries({ queryKey: ["userNFTs"] });
       queryClient.invalidateQueries({ queryKey: ["userStats"] });
       setRecipient("");
@@ -316,7 +611,10 @@ function SendNFTModal({ open, onClose, nft, collection }) {
             /* @__PURE__ */ jsxRuntimeExports.jsx(Info, { className: "w-4 h-4 text-destructive shrink-0 mt-0.5" }),
             /* @__PURE__ */ jsxRuntimeExports.jsxs("p", { className: "text-xs text-destructive leading-relaxed", children: [
               /* @__PURE__ */ jsxRuntimeExports.jsx("strong", { children: "This action cannot be undone." }),
-              " The NFT will be permanently transferred to the recipient's wallet. Double-check the Principal ID before sending."
+              " ",
+              isRegisteredExternal ? "This NFT will be sent directly from your connected wallet on the original collection canister." : "The NFT will be permanently transferred to the recipient's wallet.",
+              " ",
+              "Double-check the Principal ID before sending."
             ] })
           ] }),
           /* @__PURE__ */ jsxRuntimeExports.jsxs("div", { className: "space-y-1.5", children: [
@@ -516,7 +814,7 @@ function NFTDetailsModal({
                 )
               }
             ),
-            onSend && nft.location !== "Registered" && !isListed && /* @__PURE__ */ jsxRuntimeExports.jsxs(
+            onSend && !isListed && /* @__PURE__ */ jsxRuntimeExports.jsxs(
               Button,
               {
                 className: "gap-2",
@@ -1436,8 +1734,8 @@ function CollectionSection({
               },
               "data-ocid": `wallet.send_nft_button.${sectionIndex * 100 + i + 1}`,
               "aria-label": `Send ${nft.metadata.name ?? `NFT #${nft.tokenId}`}`,
-              disabled: nft.location === "Registered" || isNFTListed(nft),
-              hidden: nft.location === "Registered" || isNFTListed(nft),
+              disabled: isNFTListed(nft),
+              hidden: isNFTListed(nft),
               children: [
                 /* @__PURE__ */ jsxRuntimeExports.jsx(Send, { className: "w-3 h-3" }),
                 "Send"
@@ -1473,7 +1771,7 @@ function CollectionSection({
             dividendE8s: dividendBalances.get(
               nftKey(detailNft.collectionId, detailNft.tokenId)
             ) ?? 0n,
-            onSend: detailNft.location === "Registered" || isNFTListed(detailNft) ? void 0 : () => {
+            onSend: isNFTListed(detailNft) ? void 0 : () => {
               setDetailNft(null);
               setSendNft(detailNft);
             }
